@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Expresso das Contas — Matemática 3º ano</title>
+<style>
+:root{
+  --loco:#E0483E; --loco2:#b8322a; --trilho:#2F6FD6; --trilho2:#1f52a8;
+  --apito:#FFC93C; --apito2:#d9a414; --sinal:#2FA36B; --sinal2:#1f7d50;
+  --plataforma:#FFF8EC; --papel:#fffdf8; --tinta:#2b2a33; --cinza:#86828c; --linha:#efe2c6;
+  --ok:#1fa45b; --erro:#e0453a; --roxo:#8E5BD0;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;background:var(--plataforma);color:var(--tinta);font-size:19px;line-height:1.55}
+button{font-family:inherit;font-size:inherit;cursor:pointer}
+.trilhos{height:22px;background:
+  repeating-linear-gradient(90deg,#8a5a3c 0 10px,transparent 10px 34px),
+  linear-gradient(#fff8ec 0 5px,#6b6f7a 5px 8px,#fff8ec 8px 14px,#6b6f7a 14px 17px,#fff8ec 17px)}
+header.topo{background:linear-gradient(180deg,#dff0ff,#fff8ec);text-align:center;padding:14px 12px 8px}
+header.topo h1{margin:4px 0;font-size:1.8em;color:var(--loco2);letter-spacing:.5px}
+header.topo p{margin:2px 0;color:#5f5b66;font-size:.92em}
+.trem{font-size:2.3em;display:inline-block;animation:anda 3.5s ease-in-out infinite}
+@keyframes anda{0%,100%{transform:translateX(-10px)}50%{transform:translateX(10px)}}
+nav.abas{position:sticky;top:0;z-index:20;background:#fff;box-shadow:0 2px 8px #0001;display:flex;gap:6px;overflow-x:auto;padding:8px}
+nav.abas button{flex:0 0 auto;border:2px solid var(--linha);background:#fff;border-radius:14px;padding:8px 12px;font-weight:bold;color:var(--tinta);position:relative}
+nav.abas button.ativa{background:var(--trilho);border-color:var(--trilho2);color:#fff}
+nav.abas button.trancada{background:#eee;color:#999;border-color:#ddd}
+nav.abas button .selo{position:absolute;top:-8px;right:-6px;background:var(--apito);color:#5a3d00;border-radius:10px;font-size:.62em;padding:1px 6px}
+main{max-width:880px;margin:0 auto;padding:14px 12px 80px}
+section.aba{display:none}
+section.aba.ativa{display:block;animation:entra .35s ease}
+@keyframes entra{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{background:#fff;border-radius:18px;padding:16px 18px;margin:14px 0;box-shadow:0 3px 0 var(--linha),0 4px 14px #0000000d;border:2px solid var(--linha)}
+h2{color:var(--trilho2);margin:.2em 0 .4em}
+h3{margin:.3em 0}
+.sub{color:var(--cinza);font-size:.88em}
+.btn{border:none;border-radius:14px;padding:10px 16px;font-weight:bold;color:#fff;background:var(--sinal);box-shadow:0 3px 0 var(--sinal2);margin:4px 2px}
+.btn:disabled{background:#c9c4cc;box-shadow:0 3px 0 #a9a3ad;cursor:not-allowed}
+.btn.azul{background:var(--trilho);box-shadow:0 3px 0 var(--trilho2)}
+.btn.loco{background:var(--loco);box-shadow:0 3px 0 var(--loco2)}
+.btn.claro{background:#fff;color:var(--tinta);border:2px solid var(--linha);box-shadow:none}
+.trilha{display:grid;gap:10px}
+.etapa{display:flex;gap:12px;align-items:center;border-radius:16px;padding:12px 14px;border:2px solid var(--linha);background:#fff;text-align:left;width:100%;color:var(--tinta)}
+.etapa .ic{font-size:1.8em}
+.etapa.trancada{background:#f1f0f2;color:#8d8892;filter:grayscale(1)}
+.etapa.feita{border-color:var(--ok)}
+.etapa.nova{animation:brilho 1.4s ease 3;border-color:var(--apito)}
+@keyframes brilho{0%,100%{box-shadow:0 0 0 0 #ffc93c00}50%{box-shadow:0 0 0 8px #ffc93c88}}
+.tag{display:inline-block;border-radius:10px;padding:1px 8px;font-size:.75em;font-weight:bold;margin-left:4px}
+.tag.ok{background:#dff5e8;color:var(--ok)}
+.tag.novo{background:#fff1c2;color:#7a5600}
+.tag.lock{background:#e7e5ea;color:#6b6670}
+.barra{height:14px;background:#eee;border-radius:10px;overflow:hidden;margin:6px 0}
+.barra>div{height:100%;background:linear-gradient(90deg,var(--trilho),var(--apito));width:0;transition:width .4s}
+.bloco{border-left:10px solid var(--c,var(--sinal))}
+.bloco.fechado .corpo{display:none}
+.bloco .cab{display:flex;justify-content:space-between;align-items:center;gap:8px;cursor:pointer}
+.bloco.trancado{opacity:.55}
+.bilhete{display:inline-block;background:#fff4c9;border:2px dashed var(--apito2);border-radius:8px;padding:0 8px;font-size:.75em;font-weight:bold;color:#7a5600;transform:rotate(-4deg)}
+.caixa{background:#fff8e3;border:2px dashed var(--apito);border-radius:12px;padding:8px 12px;margin:10px 0;font-size:.93em}
+.conta{font-family:"Courier New",monospace;background:#f3f8ff;border:2px solid #d3e3f7;border-radius:12px;padding:8px 14px;display:inline-block;font-size:1.05em;line-height:1.4;white-space:pre;margin:6px 0}
+.regra{background:#eef9f3;border:2px solid #bfe9d2;border-radius:12px;padding:8px 12px;margin:8px 0}
+.narrador{background:#eef4ff;border-left:5px solid var(--trilho);border-radius:10px;padding:8px 12px;margin:8px 0;font-style:italic}
+.pergunta{margin:14px 0 6px;padding-top:10px;border-top:2px dotted var(--linha)}
+.opcoes{display:grid;gap:6px}
+.op{text-align:left;border:2px solid var(--linha);background:#fff;border-radius:12px;padding:8px 12px;color:var(--tinta)}
+.op:hover:not(:disabled){border-color:var(--trilho)}
+.op.certa{background:#e3f7ea;border-color:var(--ok);font-weight:bold}
+.op.errada{background:#fde6e4;border-color:var(--erro)}
+.op.cinza{background:#f2f1f3;color:#777}
+.op.sel{background:#e6efff;border-color:var(--trilho);font-weight:bold}
+.op:disabled{cursor:default}
+.fb{border-radius:12px;padding:8px 12px;margin-top:6px;font-size:.93em;animation:entra .3s}
+.fb.ok{background:#e3f7ea}
+.fb.no{background:#fff0e0}
+.estrelas{font-size:1.2em}
+table.mini{border-collapse:collapse;margin:6px 0;font-size:.92em}
+table.mini td,table.mini th{border:2px solid #cfe0f5;padding:3px 10px;text-align:center}
+table.mini th{background:#e6efff}
+.relogio{display:inline-block;vertical-align:middle;margin:4px 8px}
+.relogios{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;justify-content:center}
+.relogios figure{margin:0;text-align:center;font-size:.85em}
+/* mapa */
+.mapa .centro{background:var(--loco);color:#fff;text-align:center;border-radius:50px;padding:14px;font-weight:bold;font-size:1.15em;margin:6px auto 14px;max-width:460px;box-shadow:0 4px 0 var(--loco2)}
+.ramos{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.ramo{border-radius:16px;padding:10px 12px;background:#fff;border:3px solid var(--c);transition:filter .6s}
+.ramo h4{margin:0 0 6px;color:var(--c);font-size:1.05em}
+.mapa.incompleto .ramo{filter:saturate(.25)}
+.mapa.completo .ramo{animation:revela .8s ease}
+@keyframes revela{from{transform:scale(.96)}to{transform:none}}
+.no{margin:7px 0;font-size:.96em}
+.lacuna{display:inline-flex;gap:4px;vertical-align:middle;flex-wrap:wrap}
+.lacuna button{border:2px dashed var(--trilho);background:#eef4ff;border-radius:10px;padding:2px 10px;font-weight:bold;color:var(--trilho2)}
+.lacuna.feita span{display:inline-block;background:#e3f7ea;border:2px solid var(--ok);border-radius:10px;padding:2px 10px;font-weight:bold;color:var(--ok)}
+.lacuna button.erro{border-color:var(--erro);background:#fde6e4;color:var(--erro);animation:balanca .45s}
+@keyframes balanca{0%,100%{transform:none}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.contador{position:sticky;top:58px;z-index:5;background:var(--trilho);color:#fff;border-radius:14px;padding:8px 12px;text-align:center;font-weight:bold;margin:8px 0}
+/* vf */
+.vf-frase{font-size:1.2em;font-weight:bold;text-align:center;margin:14px 0;min-height:3em}
+.vf-bts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.vf-bts .btn{font-size:1.1em;padding:12px 22px}
+/* resumo */
+.linha-tempo{display:grid;gap:10px;position:relative;padding-left:22px}
+.linha-tempo:before{content:"";position:absolute;left:8px;top:4px;bottom:4px;width:6px;border-radius:4px;background:repeating-linear-gradient(180deg,var(--trilho) 0 12px,#fff 12px 18px)}
+.parada{display:flex;gap:10px;align-items:center;background:#fff;border:2px solid var(--linha);border-radius:14px;padding:6px 10px}
+.grade{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px}
+.palavra{background:#fff;border:2px solid var(--linha);border-radius:12px;padding:8px 10px;font-size:.93em}
+.palavra b{color:var(--trilho2)}
+.postits{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+.postit{background:#fff59a;padding:12px;border-radius:4px;box-shadow:2px 3px 6px #0002;transform:rotate(-1deg);font-size:.95em}
+.postit:nth-child(even){transform:rotate(1.2deg);background:#ffe0ef}
+.relampago button{width:100%;text-align:left}
+.resp-oculta{display:none;margin:4px 0 8px 10px;color:var(--sinal2);font-weight:bold}
+/* modal */
+.fundo-modal{position:fixed;inset:0;background:#2b2a33cc;display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.fundo-modal.aberto{display:flex}
+.modal{background:#fff;border-radius:20px;max-width:440px;width:100%;padding:20px;text-align:center;animation:entra .3s}
+.painel-salvar{font-size:.85em;color:var(--cinza)}
+input.codigo{font-size:1em;padding:8px 10px;border-radius:12px;border:2px solid var(--linha);width:170px;text-transform:uppercase}
+table.rel{width:100%;border-collapse:collapse;font-size:.88em}
+table.rel td,table.rel th{border-bottom:1px solid #eee;padding:5px;text-align:left;vertical-align:top}
+.gab-q{border-top:2px dotted var(--linha);padding-top:8px;margin-top:10px}
+.gab-op{border-radius:10px;padding:5px 10px;margin:4px 0;font-size:.92em}
+.gab-op.certa{background:#e3f7ea;border:2px solid var(--ok)}
+.gab-op.cinza{background:#f2f1f3;color:#666}
+.gab-op.marcada{outline:3px solid var(--trilho)}
+.placar-final{text-align:center;font-size:1.3em}
+.trofeu{font-size:3em}
+footer{text-align:center;color:var(--cinza);font-size:.85em;padding:20px}
+@media (max-width:520px){body{font-size:17px}header.topo h1{font-size:1.4em}}
+</style>
+</head>
+<body>
+<div class="trilhos"></div>
+<header class="topo">
+  <div class="trem">🚂🚃🚃🚃</div>
+  <h1>Expresso das Contas</h1>
+  <p><b>Matemática · 3º ano</b> · Prova: sexta-feira, 30/10</p>
+  <p>Unidade 9: multiplicação · Unidade 10: divisão · Unidade 11: medidas de tempo (relógio)</p>
+</header>
+<div class="trilhos"></div>
+<nav class="abas" id="abas"></nav>
+<main>
+
+<!-- ============ INÍCIO ============ -->
+<section class="aba" id="sec-inicio">
+  <div class="card">
+    <h2>👋 Bem-vindo a bordo, jovem aprendiz!</h2>
+    <p>Eu sou a <b>Tchuca</b>, a locomotiva do Expresso das Contas! 🚂 Vamos viajar por uma linha de trem cheia de estações. Em cada estação tem uma conta para resolver: arrumar ovos em fileiras, dividir biscoitos, descobrir quem ganhou no par ou ímpar e ler o relógio da plataforma. A cada estação concluída, você ganha um <span class="bilhete">bilhete carimbado</span>.</p>
+  </div>
+  <div class="card">
+    <h2>📋 O que vai cair na prova</h2>
+    <ul>
+      <li><b>Unidade 9 – A multiplicação e o mundo do trabalho</b> (livro p. 84 a 90, 107, 109 e 111)</li>
+      <li><b>Unidade 10 – A divisão e a convivência</b> (p. 119, 120, 125, 131, 133, 140 a 143, 145 a 147)</li>
+      <li><b>Unidade 11 – As medidas de tempo</b> (p. 155 a 159: relógio, horas cheias e minutos)</li>
+      <li>⭐ Também caem <b>continhas de adição e subtração</b>, junto com multiplicação e divisão.</li>
+      <li>📒 Estude também as atividades do <b>caderno</b> e do <b>livro de exercícios</b> dessas unidades.</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>🛤️ Sua viagem</h2>
+    <p class="sub">Os materiais abrem um por vez, na ordem. Conclua um para destravar o próximo.</p>
+    <div class="trilha" id="trilhaCards"></div>
+  </div>
+  <div class="card">
+    <h2>🧭 Como usar</h2>
+    <ol>
+      <li>Os materiais abrem <b>um por vez, na ordem</b>. Conclua um para destravar o próximo.</li>
+      <li>Deixe <b>papel e lápis</b> do lado: faça as contas no papel antes de clicar.</li>
+      <li>Errou? Tudo bem! Leia a explicação e siga viagem. Errar aqui é treino.</li>
+      <li>Depois de terminar tudo, os materiais ficam abertos para revisar quantas vezes quiser.</li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>💾 Seu progresso</h2>
+    <p class="painel-salvar" id="painelSalvar">Seu progresso é salvo sozinho neste aparelho.</p>
+    <button class="btn claro" id="btExportar">📥 Exportar</button>
+    <button class="btn claro" id="btImportar">📤 Importar</button>
+    <button class="btn claro" id="btZerar">🗑️ Zerar tudo</button>
+    <input type="file" id="arqImportar" accept=".json,application/json" style="display:none">
+  </div>
+  <div class="card">
+    <h2>📊 Relatório para os pais</h2>
+    <p class="sub">Digite o código do Simulado (SIM-…) ou o código da família.</p>
+    <input class="codigo" id="codPais" placeholder="Código" autocomplete="off">
+    <button class="btn azul" id="btRelatorio">Abrir</button>
+    <div id="areaPais"></div>
+    <p class="sub" style="margin-top:10px">💡 <b>Dica para os pais:</b> o progresso fica no navegador deste aparelho. Se trocar de aparelho, use 📥 Exportar / 📤 Importar ou libere a trilha com o código da família.</p>
+    <p class="sub">📌 O comunicado cita "medidas de tempo e de massa", mas as páginas indicadas (155 a 159) são só sobre o <b>relógio</b>. Por isso o kit não traz massa. Se a turma estudou massa no caderno, vale revisar por lá.</p>
+  </div>
+</section>
+
+<!-- ============ LEITURA ESTENDIDA ============ -->
+<section class="aba" id="sec-leitura">
+  <div class="card">
+    <h2>📖 Leitura Estendida — a viagem pelas estações</h2>
+    <p>Leia cada estação com calma e responda às <b>3 perguntas</b> do fim. A próxima estação abre quando você responder às 3. Faça as contas no papel!</p>
+    <div class="barra"><div id="barraLeitura"></div></div>
+    <p class="sub" id="txtLeitura"></p>
+  </div>
+  <div id="blocosLeitura"></div>
+  <div class="card" id="fimLeitura">
+    <h2>⚠️ Pegadinhas da linha de trem</h2>
+    <ol>
+      <li>Multiplicação é <b>adição de parcelas iguais</b>: 4 + 4 + 4 = 3 × 4. Não é 4 + 3!</li>
+      <li>Conte as <b>parcelas</b> com cuidado: 6 + 6 + 6 + 6 + 6 são <b>5</b> parcelas → 5 × 6.</li>
+      <li>Na decomposição, o 2 de 23 vale <b>20</b>: 4 × 23 = 4 × 20 + 4 × 3.</li>
+      <li>Entrada + parcelas: primeiro multiplica as parcelas, <b>depois soma a entrada</b>.</li>
+      <li>Roberta "e os 3 primos" são <b>4</b> crianças, não 3. Leia quem entra na divisão!</li>
+      <li>Divisão <b>exata</b> = não sobra nada. Sobrou? É <b>não exata</b>, e o que sobrou é o <b>resto</b>.</li>
+      <li>O resto é <b>menor</b> que o número pelo qual dividimos: se ainda dá para tirar, continue tirando!</li>
+      <li>Par termina em <b>0, 2, 4, 6 ou 8</b>; ímpar termina em <b>1, 3, 5, 7 ou 9</b>. Olhe só o algarismo das unidades.</li>
+      <li>Ponteiro <b>menor = horas</b>; ponteiro <b>maior = minutos</b>. Não troque!</li>
+      <li>De um número a outro do relógio passam <b>5 minutos</b>, não 1. Cada <b>risquinho</b> é que vale 1 minuto.</li>
+    </ol>
+    <h3>🗂️ Onde está cada assunto</h3>
+    <table class="rel">
+      <tr><th>Assunto da prova</th><th>Estação</th></tr>
+      <tr><td>Adição de parcelas iguais (p. 84–85)</td><td>1 · Estação das Parcelas Iguais</td></tr>
+      <tr><td>Configuração retangular, fator e produto (p. 86, 109)</td><td>2 · Estação das Fileiras</td></tr>
+      <tr><td>Quadros de preços (p. 87–90)</td><td>3 · Estação da Tabela de Preços</td></tr>
+      <tr><td>Multiplicação por decomposição (p. 95–99)</td><td>4 · Estação da Decomposição</td></tr>
+      <tr><td>Problemas de multiplicação no trabalho (p. 107–111)</td><td>5 · Estação dos Trabalhadores</td></tr>
+      <tr><td>Divisão exata e não exata, resto (p. 119–122)</td><td>6 · Estação da Partilha</td></tr>
+      <tr><td>Divisão por decomposição e subtrações sucessivas (p. 124–127, 140)</td><td>7 · Estação das Estratégias</td></tr>
+      <tr><td>Números pares e ímpares (p. 131–134, 145–146)</td><td>8 · Estação do Par ou Ímpar</td></tr>
+      <tr><td>Problemas com as quatro operações, adição e subtração (p. 136–138, 141–143, 146–147)</td><td>9 · Estação dos Problemas</td></tr>
+      <tr><td>Horas, relógio analógico, horas cheias (p. 153–156)</td><td>10 · Estação do Relógio</td></tr>
+      <tr><td>Minutos no relógio (p. 157–159)</td><td>11 · Estação dos Minutos</td></tr>
+      <tr><td>Tudo misturado</td><td>12 · Estação Final</td></tr>
+    </table>
+  </div>
+  <div class="card" style="text-align:center">
+    <button class="btn loco" data-proximo="mapa">🧠 Próximo: Mapa Mental para encaixar</button>
+  </div>
+</section>
+
+<!-- ============ MAPA MENTAL ============ -->
+<section class="aba" id="sec-mapa">
+  <div class="card">
+    <h2>🧠 Mapa Mental para encaixar</h2>
+    <p>O mapa da linha de trem está com <b>peças faltando</b>. Em cada buraco, clique na palavra certa. Acertou? A peça fica verde. Errou? Ela balança e você tenta de novo.</p>
+  </div>
+  <div class="contador" id="contadorMapa">🧩 Mapa: 0 peças encaixadas</div>
+  <div class="mapa incompleto" id="mapa">
+    <div class="centro">🚂 Expresso das Contas<br><span style="font-weight:normal;font-size:.85em">multiplicação · divisão · relógio</span></div>
+    <div class="ramos" id="ramosMapa"></div>
+  </div>
+  <div class="card" id="mapaFim" style="display:none;text-align:center">
+    <div class="trofeu">🧠</div>
+    <h2>Mapa completo!</h2>
+    <p>Foi você que montou esse mapa. Agora ele está inteiro e colorido!</p>
+  </div>
+  <div class="card" style="text-align:center">
+    <button class="btn loco" data-proximo="vf">✅ Próximo: Verdadeiro ou Falso</button>
+  </div>
+</section>
+
+<!-- ============ VERDADEIRO OU FALSO ============ -->
+<section class="aba" id="sec-vf">
+  <div class="card" id="vfJogo"></div>
+  <div class="card" style="text-align:center">
+    <button class="btn loco" data-proximo="resumo">🗺️ Próximo: Resumo</button>
+  </div>
+</section>
+
+<!-- ============ RESUMO ============ -->
+<section class="aba" id="sec-resumo">
+  <div class="card">
+    <h2>🗺️ Resumo do Expresso</h2>
+    <p>Tudo o que cai na prova numa página só. Leia até o fim: lá embaixo tem um botão para marcar que você terminou.</p>
+  </div>
+
+  <div class="card">
+    <h2>🛤️ Linha do tempo: um dia de hábitos saudáveis</h2>
+    <p class="sub">Exemplo do livro (p. 156): cada hábito numa hora cheia. Repare que o ponteiro <b>maior</b> está sempre no 12.</p>
+    <div class="linha-tempo" id="linhaTempo"></div>
+  </div>
+
+  <div class="card">
+    <h2>🧮 Como fazer as contas</h2>
+    <div class="regra"><b>✖️ Multiplicação = adição de parcelas iguais.</b> 5 caixas com 4 brigadeiros: 4 + 4 + 4 + 4 + 4 = <b>5 × 4 = 20</b>.</div>
+    <div class="regra"><b>🥚 Fileiras:</b> quantidade de fileiras × quantidade em cada fileira = total. 3 fileiras de 5 ovos: <b>3 × 5 = 15</b>.</div>
+    <div class="regra"><b>🧱 Decomposição:</b> separe dezenas e unidades e multiplique cada parte.<br>
+      <span class="conta">4 × 54 = 4 × 50 + 4 × 4
+       = 200   +  16  = 216</span></div>
+    <div class="regra"><b>🍪 Divisão:</b> repartir em partes iguais. 20 ÷ 2 = 10, porque 2 × 10 = 20.<br>Não sobrou nada → <b>exata</b>. Sobrou → <b>não exata</b>, e o que sobrou é o <b>resto</b>.</div>
+    <div class="regra"><b>🪴 Divisão por decomposição:</b> <span class="conta">69 ÷ 3 → 60 ÷ 3 = 20 e 9 ÷ 3 = 3 → 20 + 3 = 23</span></div>
+    <div class="regra"><b>➖ Subtrações sucessivas:</b> tire o divisor quantas vezes der e conte. 40 ÷ 6: 40 → 34 → 28 → 22 → 16 → 10 → 4. Tirei <b>6 vezes</b>, sobraram <b>4</b> (resto).</div>
+    <div class="regra"><b>🎲 Par ou ímpar:</b> olhe o último algarismo. 0, 2, 4, 6, 8 → par. 1, 3, 5, 7, 9 → ímpar.</div>
+    <div class="regra"><b>⏰ Relógio:</b> ponteiro menor → horas; ponteiro maior → minutos. Hora cheia: o maior no 12. De um número a outro: 5 minutos.</div>
+  </div>
+
+  <div class="card">
+    <h2>📊 Tabela da multiplicação (como a do livro, p. 94)</h2>
+    <p class="sub">No cruzamento da linha com a coluna fica o produto. Ex.: linha 4, coluna 7 → 28.</p>
+    <div style="overflow-x:auto" id="tabelaMult"></div>
+  </div>
+
+  <div class="card">
+    <h2>⏱️ Minutos no relógio, de 5 em 5</h2>
+    <table class="mini" id="tabelaMin"></table>
+  </div>
+
+  <div class="card">
+    <h2>🔤 Palavras importantes</h2>
+    <div class="grade">
+      <div class="palavra"><b>Parcelas iguais</b>: números iguais que somamos (4 + 4 + 4).</div>
+      <div class="palavra"><b>Multiplicação (×)</b>: jeito curto de somar parcelas iguais.</div>
+      <div class="palavra"><b>Fator</b>: cada número que está sendo multiplicado.</div>
+      <div class="palavra"><b>Produto</b>: o resultado da multiplicação.</div>
+      <div class="palavra"><b>Configuração retangular</b>: objetos arrumados em fileiras iguais.</div>
+      <div class="palavra"><b>Dobro</b>: multiplicar por 2.</div>
+      <div class="palavra"><b>Decomposição</b>: separar o número em dezenas e unidades (54 = 50 + 4).</div>
+      <div class="palavra"><b>Divisão (÷)</b>: repartir uma quantidade em partes iguais.</div>
+      <div class="palavra"><b>Divisão exata</b>: não sobra nada.</div>
+      <div class="palavra"><b>Divisão não exata</b>: sobra alguma coisa.</div>
+      <div class="palavra"><b>Resto</b>: o que sobra na divisão.</div>
+      <div class="palavra"><b>Número par</b>: dividido por 2, não sobra nada.</div>
+      <div class="palavra"><b>Número ímpar</b>: dividido por 2, sobra 1.</div>
+      <div class="palavra"><b>Hora cheia</b>: o ponteiro dos minutos está no 12.</div>
+      <div class="palavra"><b>Sentido horário</b>: o sentido em que os ponteiros giram.</div>
+      <div class="palavra"><b>Unidades de tempo</b>: segundo, minuto e hora.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>📌 Dicas de prova</h2>
+    <div class="postits">
+      <div class="postit"><b>60 segundos = 1 minuto · 60 minutos = 1 hora · 24 horas = 1 dia.</b></div>
+      <div class="postit">O ponteiro das horas dá <b>2 voltas</b> no relógio em 1 dia (24 horas).</div>
+      <div class="postit">Achou o resultado da divisão? Confira com a multiplicação: 28 ÷ 4 = 7 porque <b>4 × 7 = 28</b>.</div>
+      <div class="postit">Problema com "entrada + parcelas": <b>multiplique as parcelas e some a entrada</b>.</div>
+      <div class="postit">Os <b>6 passos</b>: entender a situação, entender a pergunta, escolher a operação, achar os dados, calcular e responder.</div>
+      <div class="postit">Dividir qualquer número por <b>1</b> dá ele mesmo. Dividir uma dezena exata por <b>10</b>: 60 ÷ 10 = 6.</div>
+    </div>
+  </div>
+
+  <div class="card relampago">
+    <h2>⚡ Mini-quiz relâmpago</h2>
+    <p class="sub">Pense na resposta e clique para conferir.</p>
+    <div id="relampago"></div>
+  </div>
+
+  <div class="card" style="text-align:center" id="fimResumo">
+    <p>Chegou até aqui? Então marque:</p>
+    <button class="btn" id="btLiResumo" disabled>✅ Li o resumo até o fim</button>
+    <p class="sub" id="txtLiResumo">O botão acende quando você chegar ao fim da página.</p>
+    <button class="btn loco" data-proximo="simulado">📝 Pronto para o Simulado!</button>
+  </div>
+</section>
+
+<!-- ============ SIMULADO ============ -->
+<section class="aba" id="sec-simulado">
+  <div class="card">
+    <h2>📝 Simulado do Expresso</h2>
+    <p><b>25 questões</b>. Faça as contas no papel, marque uma alternativa em cada questão e clique em <b>Enviar</b> no final. Depois aparecem sua nota, seu código e o gabarito comentado.</p>
+    <div class="barra"><div id="barraSim"></div></div>
+    <p class="sub" id="txtSim"></p>
+  </div>
+  <div id="questoesSim"></div>
+  <div class="card" style="text-align:center" id="envioSim">
+    <button class="btn loco" id="btEnviarSim">📨 Enviar Simulado</button>
+  </div>
+  <div id="resultadoSim"></div>
+</section>
+
+</main>
+<footer>🚂 Expresso das Contas · Matemática 3º ano · conteúdo do livro Phases Matemática 3 – Livro 2 (Unidades 9, 10 e 11)</footer>
+
+<div class="fundo-modal" id="fundoModal"><div class="modal" id="modal"></div></div>
+<script>
+// ===================== RELÓGIO (desenho em SVG, feito na própria página) =====================
+function relogio(h, m, opt){
+  opt = opt || {}; const t = opt.t || 120; const c = 60, r = 54;
+  let s = `<svg class="relogio" width="${t}" height="${t}" viewBox="0 0 120 120" role="img" aria-label="relógio">`;
+  s += `<circle cx="60" cy="60" r="57" fill="#2F6FD6"/><circle cx="60" cy="60" r="${r}" fill="#fffdf8"/>`;
+  if(opt.arco && m>0){
+    const a = m*6*Math.PI/180; const x = c + 50*Math.sin(a), y = c - 50*Math.cos(a);
+    s += m>=60 ? `<circle cx="60" cy="60" r="50" fill="#c9a6ea"/>` : `<path d="M60 60 L60 10 A50 50 0 ${m>30?1:0} 1 ${x.toFixed(2)} ${y.toFixed(2)} Z" fill="#c9a6ea"/>`;
+  }
+  for(let i=0;i<60;i++){ const a=i*6*Math.PI/180; const r1 = i%5===0?44:48; s += `<line x1="${(c+r1*Math.sin(a)).toFixed(1)}" y1="${(c-r1*Math.cos(a)).toFixed(1)}" x2="${(c+51*Math.sin(a)).toFixed(1)}" y2="${(c-51*Math.cos(a)).toFixed(1)}" stroke="#555" stroke-width="${i%5===0?2:1}"/>`; }
+  for(let n=1;n<=12;n++){ const a=n*30*Math.PI/180; s += `<text x="${(c+36*Math.sin(a)).toFixed(1)}" y="${(c-36*Math.cos(a)+4.5).toFixed(1)}" font-size="13" font-weight="bold" text-anchor="middle" fill="#2b2a33" font-family="Verdana">${n}</text>`; }
+  const ah = ((h%12)*30 + m*0.5)*Math.PI/180, am = (m%60)*6*Math.PI/180;
+  s += `<line x1="60" y1="60" x2="${(c+24*Math.sin(ah)).toFixed(1)}" y2="${(c-24*Math.cos(ah)).toFixed(1)}" stroke="#E0483E" stroke-width="6" stroke-linecap="round"/>`;
+  s += `<line x1="60" y1="60" x2="${(c+42*Math.sin(am)).toFixed(1)}" y2="${(c-42*Math.cos(am)).toFixed(1)}" stroke="#2b2a33" stroke-width="3.5" stroke-linecap="round"/>`;
+  s += `<circle cx="60" cy="60" r="4" fill="#2b2a33"/></svg>`;
+  return s;
+}
+
+// ===================== DADOS (fonte: Phases Matemática 3 – Livro 2, Unidades 9, 10 e 11 — lido no P+) =====================
+const BLOCOS = [
+{ id:'b1', emoji:'🚃', titulo:'Estação das Parcelas Iguais', tema:'Adição de parcelas iguais e multiplicação', pag:'p. 84, 85 e 91', cor:'#E0483E',
+  html:`<p class="narrador">Tchuca diz: "Piuí! Nesta unidade a gente estuda a multiplicação em situações de trabalho. Todo tipo de trabalho é importante!"</p>
+<p>Carla é <b>confeiteira</b>. Ela arrumou os brigadeiros em <b>5 caixas</b>, com <b>4 brigadeiros em cada uma</b>. Quantos brigadeiros há ao todo?</p>
+<p>Podemos fazer uma <b>adição</b>:</p>
+<span class="conta">4 + 4 + 4 + 4 + 4 = 20</span>
+<p>Repare: todas as parcelas são <b>iguais</b> (todas valem 4). Isso se chama <b>adição de parcelas iguais</b>.</p>
+<div class="regra">📌 <b>Toda adição de parcelas iguais pode ser escrita na forma de multiplicação.</b><br>
+5 caixas com 4 em cada uma → <b>5 × 4 = 20</b> (lemos: "cinco vezes quatro é igual a vinte").</div>
+<p>🚃 No nosso trem é igual: <b>3 vagões com 6 passageiros em cada um</b> → 6 + 6 + 6 = <b>3 × 6 = 18</b> passageiros.</p>
+<div class="caixa">🔎 <b>Curiosidade do livro:</b> o sinal de igual (=) foi usado por <b>Robert Recorde</b>, em <b>1557</b>, para não ter que escrever "é igual a" toda hora. Ele dizia que nada é mais igual do que <b>duas retas paralelas</b>, por isso o sinal tem dois risquinhos iguais. Exemplos: 4 + 4 + 4 + 4 + 4 = 5 × 4 · 10 × 7 = 7 × 10.</div>`,
+  palavras:['parcelas iguais','multiplicação','vezes (×)','sinal de igual (=)'],
+  qs:[
+   {q:'Como escrevemos 3 + 3 + 3 + 3 na forma de multiplicação?', o:[
+     {t:'4 × 3 = 12',ok:1,w:'Isso! São 4 parcelas iguais a 3: 4 × 3 = 12.'},
+     {t:'3 × 3 = 9',w:'Conte as parcelas: são 4 números 3, não 3. O certo é 4 × 3 = 12.'},
+     {t:'4 + 3 = 7',w:'Isso é uma adição de 4 com 3. Quatro parcelas de 3 é 4 × 3 = 12.'},
+     {t:'4 × 4 = 16',w:'Cada parcela vale 3, não 4. O certo é 4 × 3 = 12.'}]},
+   {q:'Numa vitrine há 6 caixas com 5 brigadeiros em cada uma. Quantos brigadeiros há ao todo?', o:[
+     {t:'30',ok:1,w:'Muito bem! 5 + 5 + 5 + 5 + 5 + 5 = 6 × 5 = 30.'},
+     {t:'11',w:'11 é 6 + 5 (somou as caixas com os brigadeiros). O certo é 6 × 5 = 30.'},
+     {t:'25',w:'25 seria 5 caixas. São 6 caixas: 6 × 5 = 30.'},
+     {t:'35',w:'35 seria 7 caixas. São 6 caixas: 6 × 5 = 30.'}]},
+   {q:'Qual sentença está CERTA?', o:[
+     {t:'5 × 4 = 4 + 4 + 4 + 4 + 4',ok:1,w:'Certo! 5 vezes 4 é somar o 4 cinco vezes.'},
+     {t:'5 × 4 = 5 + 4',w:'5 + 4 = 9, mas 5 × 4 = 20. Multiplicar não é somar os dois números.'},
+     {t:'5 × 4 = 5 + 5 + 5 + 5 + 5 + 5',w:'Aí são 6 parcelas de 5 (= 30). 5 × 4 = 20.'},
+     {t:'5 × 4 = 9',w:'9 é 5 + 4. O produto de 5 × 4 é 20.'}]}
+  ]},
+{ id:'b2', emoji:'🥚', titulo:'Estação das Fileiras', tema:'Configuração retangular, fator e produto', pag:'p. 86, 92, 94, 106 e 109', cor:'#2F6FD6',
+  html:`<p>Ofélia é <b>feirante</b> e vende ovos. Ela organizou os ovos dentro de uma caixa em <b>3 fileiras com 5 ovos em cada uma</b>:</p>
+<p style="font-size:1.6em;line-height:1.2;text-align:center">🥚🥚🥚🥚🥚<br>🥚🥚🥚🥚🥚<br>🥚🥚🥚🥚🥚</p>
+<div class="regra">📌 Quando as coisas estão arrumadas em fileiras iguais (a <b>configuração retangular</b>), fazemos:<br>
+<b>quantidade de fileiras × quantidade em cada fileira = total</b><br>3 × 5 = <b>15 ovos</b>.</div>
+<p>O livro também mostra um <b>coral</b> com os cantores lado a lado, em fileiras: é a mesma ideia! Fileiras × cantores em cada fileira = total de cantores.</p>
+<div class="caixa">🔤 <b>Nomes das partes:</b> em <b>3 × 5 = 15</b>, o 3 e o 5 são os <b>fatores</b> (os números que multiplicamos) e o 15 é o <b>produto</b> (o resultado).</div>
+<p>🎴 <b>Jogo "Que fator sou eu?"</b>: cada jogador cola uma carta na testa (2, 3, 4, 5 ou 10) sem ver o número. O <b>Mestre multiplicador</b> multiplica as cartas e diz o <b>produto</b>. Exemplo do livro: o colega está com o <b>3</b> e o produto é <b>6</b>. Que número vezes 3 dá 6? <b>2</b>! "Eu sou o 2!"</p>
+<p>📊 Na <b>tabela da multiplicação</b>, o produto fica no cruzamento da linha com a coluna: linha 3 com coluna 4 → <b>12</b>.</p>`,
+  palavras:['configuração retangular','fileiras','fator','produto','Mestre multiplicador'],
+  qs:[
+   {q:'Uma caixa tem 2 fileiras com 6 ovos em cada uma. Quantos ovos há na caixa?', o:[
+     {t:'12',ok:1,w:'Isso! 2 fileiras × 6 ovos = 12 ovos.'},
+     {t:'8',w:'8 é 2 + 6. Com fileiras iguais, multiplicamos: 2 × 6 = 12.'},
+     {t:'6',w:'6 é só uma fileira. São 2 fileiras: 2 × 6 = 12.'},
+     {t:'14',w:'Confira: 6 + 6 = 12, não 14.'}]},
+   {q:'No "Que fator sou eu?", seu colega está com a carta 5 e o produto é 20. Qual é a sua carta?', o:[
+     {t:'4',ok:1,w:'Muito bem! 4 × 5 = 20, então você é o 4.'},
+     {t:'15',w:'15 é 20 − 5. Mas o jogo é de multiplicação: que número × 5 dá 20? O 4.'},
+     {t:'25',w:'25 é 20 + 5. Procure o número que vezes 5 dá 20: é o 4.'},
+     {t:'100',w:'100 é 20 × 5. Queremos o número que vezes 5 dá 20: 4.'}]},
+   {q:'Em 3 × 7 = 21, como se chama o número 21?', o:[
+     {t:'Produto',ok:1,w:'Certo! O resultado da multiplicação é o produto.'},
+     {t:'Fator',w:'Fatores são o 3 e o 7 (os números multiplicados). O 21 é o produto.'},
+     {t:'Parcela',w:'Parcela é cada número de uma adição. Na multiplicação, o resultado é o produto.'},
+     {t:'Resto',w:'Resto é o que sobra numa divisão. O resultado da multiplicação é o produto.'}]}
+  ]},
+{ id:'b3', emoji:'🧾', titulo:'Estação da Tabela de Preços', tema:'Quadros de preços e multiplicação', pag:'p. 87 a 90', cor:'#D99A00',
+  html:`<p>No prédio onde Eloá trabalha há uma <b>máquina de lanches</b>. O administrador consulta <b>quadros</b> para saber quanto foi vendido. Veja o quadro das <b>uvas-passas</b> (cada pacote custa 2 reais):</p>
+<table class="mini"><tr><th>Quantidade</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td></tr>
+<tr><th>Preço (reais)</th><td>2</td><td>4</td><td>6</td><td>8</td><td>10</td><td>12</td><td>14</td><td>16</td><td>18</td><td>20</td></tr></table>
+<p>A cada pacote a mais, o preço aumenta <b>+2</b>. Isso é a multiplicação: <b>quantidade × preço de 1 pacote</b>. 7 pacotes → 7 × 2 = <b>14 reais</b>.</p>
+<p>Os outros quadros do livro: <b>chips de banana</b> 3 reais (vai de 3 em 3), <b>barra de cereal</b> 4 reais (de 4 em 4), <b>amêndoas</b> 5 reais (de 5 em 5) e <b>suco verde</b> 10 reais (de 10 em 10).</p>
+<div class="regra">📌 <b>E se eu souber o dinheiro?</b> Com <b>20 reais</b>, quantas barras de cereal (4 reais) posso comprar? Procure o 20 na linha do preço: 4, 8, 12, 16, <b>20</b> → são <b>5 barras</b>, porque 5 × 4 = 20.</div>
+<p>🚃 O quadro pode continuar depois do 10! Suco verde: 10 garrafas custam 100 reais; <b>11 garrafas</b> custam 100 + 10 = <b>110 reais</b>.</p>`,
+  palavras:['quadro de preços','+2, +3, +4… a cada linha','quantidade × preço'],
+  qs:[
+   {q:'Um pacote de chips de banana custa 3 reais. Quanto custam 7 pacotes?', o:[
+     {t:'21 reais',ok:1,w:'Isso! 7 × 3 = 21 (3, 6, 9, 12, 15, 18, 21).'},
+     {t:'10 reais',w:'10 é 7 + 3. Para o preço de 7 pacotes, multiplicamos: 7 × 3 = 21.'},
+     {t:'24 reais',w:'24 seria 8 pacotes. 7 pacotes: 7 × 3 = 21.'},
+     {t:'18 reais',w:'18 seria 6 pacotes. 7 pacotes: 7 × 3 = 21.'}]},
+   {q:'Cada barra de cereal custa 4 reais. Com 32 reais, quantas barras posso comprar?', o:[
+     {t:'8 barras',ok:1,w:'Muito bem! 8 × 4 = 32 (4, 8, 12, 16, 20, 24, 28, 32).'},
+     {t:'28 barras',w:'28 é 32 − 4. Procure quantas vezes o 4 cabe em 32: 8 vezes.'},
+     {t:'36 barras',w:'36 é 32 + 4. Que número × 4 dá 32? O 8.'},
+     {t:'7 barras',w:'7 barras custam 28 reais. Com 32 reais dá para 8 barras (8 × 4 = 32).'}]},
+   {q:'Cada garrafa de suco verde custa 10 reais. Quantas garrafas dá para comprar com 110 reais?', o:[
+     {t:'11 garrafas',ok:1,w:'Isso! 11 × 10 = 110. O quadro pode continuar depois do 10.'},
+     {t:'10 garrafas',w:'10 garrafas custam 100 reais. Com 110 reais sobra para mais uma: 11 garrafas.'},
+     {t:'100 garrafas',w:'100 é 110 − 10. Cada garrafa custa 10: 11 × 10 = 110 → 11 garrafas.'},
+     {t:'12 garrafas',w:'12 garrafas custam 120 reais. Com 110 reais são 11 garrafas.'}]}
+  ]},
+{ id:'b4', emoji:'🧱', titulo:'Estação da Decomposição', tema:'Multiplicação por decomposição', pag:'p. 95 a 100 e 105', cor:'#8E5BD0',
+  html:`<p>Para multiplicar números maiores, podemos <b>decompor</b> (separar) o número em <b>dezenas e unidades</b> e multiplicar cada parte.</p>
+<p><b>Situação 1:</b> Yolanda é <b>estilista</b>. Um vestido tem <b>13 botões</b>. Quantos botões para <b>3 vestidos</b>?</p>
+<span class="conta">13 = 10 + 3
+3 × 10 = 30
+3 × 3  =  9
+30 + 9 = 39 botões</span>
+<p><b>Situação 2:</b> Aurélio é <b>floricultor</b>. Ele separou <b>2 caixas com 65 mudas</b> de amor-perfeito: 65 = 60 + 5 → 2 × 60 = 120 e 2 × 5 = 10 → <b>120 + 10 = 130 mudas</b>.</p>
+<p><b>Situação 3:</b> Mariano é <b>pescador</b>. Pescou <b>4 baldes com 54 peixes</b>: 54 = 50 + 4 → 4 × 50 = 200 e 4 × 4 = 16 → <b>200 + 16 = 216 peixes</b>.</p>
+<div class="regra">📌 No <b>material dourado</b>, cada <b>barra</b> é uma dezena (10) e cada <b>cubinho</b> é uma unidade (1). Multiplicamos as barras, depois os cubinhos, e juntamos tudo.</div>
+<div class="caixa">🔢 <b>Calculadora quebrada (livro p. 105):</b> sem uma tecla, dá para fazer 5 × 32 assim: 5 × 30 + 5 × 2 = 150 + 10 = <b>160</b>.</div>`,
+  palavras:['decompor','dezenas e unidades','material dourado'],
+  qs:[
+   {q:'Como calcular 4 × 23 por decomposição?', o:[
+     {t:'4 × 20 + 4 × 3 = 80 + 12 = 92',ok:1,w:'Isso! 23 = 20 + 3; multiplicamos cada parte e juntamos: 92.'},
+     {t:'4 × 2 + 4 × 3 = 8 + 12 = 20',w:'O 2 de 23 vale 20 (são 2 dezenas). O certo é 4 × 20 + 4 × 3 = 92.'},
+     {t:'4 × 20 = 80',w:'Faltou multiplicar as unidades: 4 × 3 = 12. Total: 80 + 12 = 92.'},
+     {t:'4 + 20 + 3 = 27',w:'Isso é uma soma. Para multiplicar: 4 × 20 + 4 × 3 = 92.'}]},
+   {q:'Um fazendeiro encheu 6 baldes com 12 litros de leite em cada um. Quantos litros ao todo?', o:[
+     {t:'72 litros',ok:1,w:'Muito bem! 12 = 10 + 2 → 6 × 10 = 60 e 6 × 2 = 12 → 60 + 12 = 72.'},
+     {t:'18 litros',w:'18 é 6 + 12. São 6 baldes de 12 litros: 6 × 12 = 72.'},
+     {t:'62 litros',w:'Faltou somar certo as unidades: 6 × 2 = 12, não 2. Total: 60 + 12 = 72.'},
+     {t:'612 litros',w:'Não juntamos os resultados lado a lado: somamos 60 + 12 = 72.'}]},
+   {q:'Um caminhão leva 3 pallets com 32 caixas em cada um. Quantas caixas há no caminhão?', o:[
+     {t:'96 caixas',ok:1,w:'Isso! 3 × 30 = 90 e 3 × 2 = 6 → 90 + 6 = 96.'},
+     {t:'35 caixas',w:'35 é 3 + 32. São 3 pallets de 32: 3 × 32 = 96.'},
+     {t:'90 caixas',w:'Faltaram as unidades: 3 × 2 = 6. Total: 90 + 6 = 96.'},
+     {t:'92 caixas',w:'Confira as unidades: 3 × 2 = 6, então 90 + 6 = 96.'}]}
+  ]},
+{ id:'b5', emoji:'👷', titulo:'Estação dos Trabalhadores', tema:'Problemas de multiplicação no mundo do trabalho', pag:'p. 102, 104, 107 a 111', cor:'#2FA36B',
+  html:`<p>Nesta estação, cada problema mostra uma <b>profissão</b>. Procure as pistas da multiplicação: <b>"em cada"</b>, <b>"por dia"</b>, <b>"para cada"</b>, <b>"cédulas de"</b>.</p>
+<ul>
+<li>⏰ Cláudia trabalha de <b>segunda a sexta</b> (5 dias), <b>8 horas por dia</b> → 5 × 8 = <b>40 horas por semana</b>.</li>
+<li>🍦 Na sorveteria, um cliente pagou com <b>6 cédulas de 2 reais</b> → 6 × 2 = <b>12 reais</b>.</li>
+<li>🖌️ Um pintor recebeu <b>8 cédulas de 50 reais</b> → 8 × 50 = <b>400 reais</b>.</li>
+<li>🐄 Mário tirou <b>5 baldes com 15 litros</b> de leite → 5 × 15 = <b>75 litros</b>.</li>
+</ul>
+<div class="regra">📌 <b>Entrada + parcelas</b> (livro p. 111): um liquidificador custa <b>entrada de 30 reais + 5 parcelas de 14 reais</b>.<br>
+1º) parcelas: 5 × 14 = 70 · 2º) some a entrada: 30 + 70 = <b>100 reais</b>.</div>
+<div class="regra">📌 <b>"Para cada convidado"</b>: Marisa frita <b>4 quibes e 5 coxinhas por convidado</b>. Com <b>10 convidados</b>: 10 × 4 = <b>40 quibes</b> e 10 × 5 = <b>50 coxinhas</b>.</div>
+<div class="caixa">🎲 <b>Jogo do dobro (p. 104):</b> o <b>dobro</b> de um número é ele <b>× 2</b>. Um grupo diz 1, o outro diz o dobro (2), depois 4, 8, 16, 32… tudo de cabeça!</div>`,
+  palavras:['por dia','em cada','entrada + parcelas','dobro (× 2)'],
+  qs:[
+   {q:'Uma costureira trabalha 6 horas por dia, de segunda a sexta. Quantas horas ela trabalha na semana?', o:[
+     {t:'30 horas',ok:1,w:'Isso! De segunda a sexta são 5 dias: 5 × 6 = 30 horas.'},
+     {t:'11 horas',w:'11 é 6 + 5. São 5 dias de 6 horas: 5 × 6 = 30.'},
+     {t:'42 horas',w:'42 seria trabalhar 7 dias. De segunda a sexta são 5 dias: 30 horas.'},
+     {t:'36 horas',w:'36 seria 6 dias. De segunda a sexta são 5 dias: 5 × 6 = 30.'}]},
+   {q:'Um tênis custa: entrada de 20 reais + 4 parcelas de 15 reais. Qual é o preço total?', o:[
+     {t:'80 reais',ok:1,w:'Muito bem! 4 × 15 = 60 e 60 + 20 = 80.'},
+     {t:'60 reais',w:'60 é só o valor das parcelas. Falta somar a entrada: 60 + 20 = 80.'},
+     {t:'39 reais',w:'39 é 20 + 4 + 15. Primeiro multiplique as parcelas: 4 × 15 = 60; depois some 20: 80.'},
+     {t:'35 reais',w:'35 é 20 + 15 (só uma parcela). São 4 parcelas: 60 + 20 = 80.'}]},
+   {q:'Qual é o dobro de 16?', o:[
+     {t:'32',ok:1,w:'Certo! Dobro é × 2: 2 × 16 = 32.'},
+     {t:'18',w:'18 é 16 + 2. Dobro é multiplicar por 2: 32.'},
+     {t:'8',w:'8 é a metade de 16. O dobro é 32.'},
+     {t:'162',w:'Não se escreve o 2 do lado. Dobro é 16 + 16 = 32.'}]}
+  ]},
+{ id:'b6', emoji:'🍪', titulo:'Estação da Partilha', tema:'Divisão exata e divisão não exata', pag:'p. 118 a 122', cor:'#F28C28',
+  html:`<p><b>Dividir</b> é repartir uma quantidade em <b>partes iguais</b>.</p>
+<p>🚗 Paulo levou <b>20 carrinhos</b> para a escola e dividiu igualmente com uma colega: são <b>2 crianças</b>.</p>
+<span class="conta">20 ÷ 2 = 10   (lemos: "vinte dividido por dois")
+porque 2 × 10 = 20</span>
+<div class="regra">📌 Quando dividimos em partes iguais e <b>não sobra nada</b>, a divisão é <b>exata</b>.</div>
+<p>🍪 Roberta brincava com os <b>3 primos</b>. Na hora do lanche, ela dividiu <b>13 biscoitos</b> igualmente entre ela e os primos: são <b>4 crianças</b>!</p>
+<ul><li>Deu 1 para cada → sobraram 9.</li><li>Deu mais 1 para cada → sobraram 5.</li><li>Deu mais 1 para cada → sobrou <b>1</b>.</li></ul>
+<p>Cada um recebeu <b>3 biscoitos</b> e sobrou <b>1</b>. Esse que sobrou se chama <b>resto</b>.</p>
+<div class="regra">📌 Quando dividimos em partes iguais e <b>sobra resto</b>, a divisão é <b>não exata</b>.</div>
+<div class="caixa">🍬 <b>Quantas vezes cabe?</b> 20 bombons em saquinhos com 4: 20 − 4 = 16, 16 − 4 = 12, 12 − 4 = 8, 8 − 4 = 4, 4 − 4 = 0. Tirei 5 vezes → <b>5 saquinhos</b>, porque 20 ÷ 4 = 5.</div>`,
+  palavras:['dividir igualmente','÷ (dividido por)','divisão exata','divisão não exata','resto'],
+  qs:[
+   {q:'Roberta brinca com os 3 primos dela e vai dividir 13 biscoitos igualmente entre todos. Por quanto ela divide?', o:[
+     {t:'Por 4, porque são ela e mais 3 primos',ok:1,w:'Isso! Roberta também come: 1 + 3 = 4 crianças.'},
+     {t:'Por 3, porque são 3 primos',w:'Pegadinha! A Roberta também ganha biscoito: são 4 crianças.'},
+     {t:'Por 13, porque são 13 biscoitos',w:'13 é a quantidade que vamos repartir. Repartimos entre 4 crianças.'},
+     {t:'Por 10, porque 13 − 3 = 10',w:'Não subtraímos aqui. Dividimos 13 entre as 4 crianças.'}]},
+   {q:'17 figurinhas divididas igualmente entre 5 crianças. Cada uma recebe quantas, e quantas sobram?', o:[
+     {t:'3 para cada e sobram 2',ok:1,w:'Muito bem! 5 × 3 = 15; 17 − 15 = 2 de resto.'},
+     {t:'3 para cada e não sobra nada',w:'5 × 3 = 15, e 17 − 15 = 2. Sobram 2: a divisão é não exata.'},
+     {t:'4 para cada e sobram 3',w:'4 para cada seriam 20 figurinhas, e só temos 17. Cada um recebe 3 e sobram 2.'},
+     {t:'2 para cada e sobram 7',w:'Ainda dá para dar mais uma para cada (sobram 7, que é mais que 5). O certo: 3 e sobram 2.'}]},
+   {q:'Qual destas divisões é EXATA?', o:[
+     {t:'24 ÷ 4',ok:1,w:'Certo! 24 ÷ 4 = 6 e não sobra nada (4 × 6 = 24).'},
+     {t:'25 ÷ 4',w:'25 ÷ 4 = 6 e sobra 1: é não exata.'},
+     {t:'19 ÷ 2',w:'19 ÷ 2 = 9 e sobra 1: é não exata.'},
+     {t:'13 ÷ 3',w:'13 ÷ 3 = 4 e sobra 1: é não exata.'}]}
+  ]},
+{ id:'b7', emoji:'🪴', titulo:'Estação das Estratégias', tema:'Divisão por decomposição e por subtrações sucessivas', pag:'p. 124 a 127 e 140', cor:'#14A3A0',
+  html:`<p>Para dividir números maiores existem várias <b>estratégias</b>.</p>
+<p><b>1) Divisão por decomposição.</b> Uma turma do 3º ano juntou <b>69 garrafas PET</b> para uma horta vertical e vai dividir entre <b>3 grupos</b>:</p>
+<span class="conta">69 = 60 + 9
+60 ÷ 3 = 20
+ 9 ÷ 3 =  3
+20 + 3 = 23 garrafas para cada grupo</span>
+<p><b>2) Método das subtrações sucessivas.</b> Um abrigo acolhe <b>6 crianças</b> e recebeu <b>40 blusas</b>. Vamos tirar 6 de cada vez e marcar um tracinho a cada vez:</p>
+<span class="conta">40 − 6 = 34  |
+34 − 6 = 28  |
+28 − 6 = 22  |
+22 − 6 = 16  |
+16 − 6 = 10  |
+10 − 6 =  4  |   → 6 tracinhos
+4 é menor que 6: não dá mais para tirar.</span>
+<div class="regra">📌 O último número que sobrou é o <b>resto</b> (4), e a quantidade de vezes que tiramos é o <b>resultado</b> (6). Cada criança recebe <b>6 blusas</b> e sobram <b>4</b>.</div>
+<div class="caixa">🔎 <b>Descobertas do livro (p. 140):</b> dividir por <b>1</b> dá o próprio número (20 ÷ 1 = 20). Dividir por <b>10</b>: 60 ÷ 10 = 6 · 35 ÷ 10 = 3 e resto 5.</div>`,
+  palavras:['decomposição','subtrações sucessivas','resto','÷ 1 e ÷ 10'],
+  qs:[
+   {q:'Como calcular 84 ÷ 4 por decomposição?', o:[
+     {t:'80 ÷ 4 + 4 ÷ 4 = 20 + 1 = 21',ok:1,w:'Isso! 84 = 80 + 4; dividimos cada parte e juntamos: 21.'},
+     {t:'8 ÷ 4 + 4 ÷ 4 = 2 + 1 = 3',w:'O 8 de 84 vale 80. 80 ÷ 4 = 20, então o resultado é 21.'},
+     {t:'80 ÷ 4 = 20',w:'Faltou dividir as unidades: 4 ÷ 4 = 1. Total: 21.'},
+     {t:'84 − 4 = 80',w:'Isso é só uma subtração. Por decomposição: 80 ÷ 4 + 4 ÷ 4 = 21.'}]},
+   {q:'Pelas subtrações sucessivas, quanto é 23 ÷ 5?', o:[
+     {t:'4, e sobram 3',ok:1,w:'Muito bem! 23 → 18 → 13 → 8 → 3: tirei 5 quatro vezes e sobraram 3.'},
+     {t:'5, e não sobra nada',w:'5 × 5 = 25, que passa de 23. Dá para tirar 4 vezes e sobram 3.'},
+     {t:'3, e sobram 8',w:'Ainda dá para tirar 5 de 8! Continue: 4 vezes, e sobram 3.'},
+     {t:'4, e não sobra nada',w:'4 × 5 = 20 e 23 − 20 = 3. Sobram 3.'}]},
+   {q:'Quanto é 46 ÷ 10?', o:[
+     {t:'4, e resto 6',ok:1,w:'Certo! 4 × 10 = 40 e sobram 6.'},
+     {t:'46, e resto 0',w:'46 ÷ 1 é que dá 46. Dividindo por 10: 4 e resto 6.'},
+     {t:'6, e resto 4',w:'Trocou: 10 cabe 4 vezes em 46, e sobram 6.'},
+     {t:'4, e resto 0',w:'4 × 10 = 40, e 46 − 40 = 6. O resto é 6.'}]}
+  ]},
+{ id:'b8', emoji:'🎲', titulo:'Estação do Par ou Ímpar', tema:'Números pares e ímpares', pag:'p. 131 a 134, 145 e 146', cor:'#D9488F',
+  html:`<p>Lorena tem <b>8 moedas</b> e Benício tem <b>7</b>. Se dividirmos por 2:</p>
+<ul><li>8 ÷ 2 = 4 e <b>não sobra nada</b> → 8 é um número <b>par</b>.</li><li>7 ÷ 2 = 3 e <b>sobra 1</b> → 7 é um número <b>ímpar</b>.</li></ul>
+<div class="regra">📌 <b>Número par:</b> dividido por 2, a divisão é exata. Termina em <b>0, 2, 4, 6 ou 8</b>.<br>
+📌 <b>Número ímpar:</b> dividido por 2, a divisão é não exata. Termina em <b>1, 3, 5, 7 ou 9</b>.<br>
+Exemplos: <b>62</b> é par (termina em 2); <b>73</b> é ímpar (termina em 3).</div>
+<p>🏠 <b>Sabia?</b> Numa rua, de um lado ficam só as casas com números <b>pares</b> e do outro só as com números <b>ímpares</b>.</p>
+<p>✋ <b>Par ou ímpar na linha:</b> cada jogador mostra de 1 a 10 dedos. Somamos os dedos dos dois: se o total for par, ganha quem escolheu par; se for ímpar, ganha quem escolheu ímpar. Ex.: 4 + 5 = 9 → ganha o ímpar.</p>
+<p>💃 <b>Dança em pares:</b> para todo mundo ter par, o número de alunos precisa ser <b>par</b>. 30 alunos → dá certo. 29 alunos → um fica sem par.</p>`,
+  palavras:['número par','número ímpar','algarismo das unidades'],
+  qs:[
+   {q:'Qual destes números é ÍMPAR?', o:[
+     {t:'451',ok:1,w:'Isso! 451 termina em 1, que é ímpar.'},
+     {t:'506',w:'506 termina em 6: é par.'},
+     {t:'790',w:'790 termina em 0: é par.'},
+     {t:'384',w:'384 termina em 4: é par.'}]},
+   {q:'No par ou ímpar, Téo mostrou 3 dedos e Lia mostrou 5. Quem escolheu ÍMPAR ganhou?', o:[
+     {t:'Não: 3 + 5 = 8, que é par. Ganhou quem escolheu par.',ok:1,w:'Muito bem! Somamos os dedos: 8 termina em 8, é par.'},
+     {t:'Sim, porque 3 e 5 são ímpares',w:'Não olhamos cada mão: olhamos o TOTAL. 3 + 5 = 8, par.'},
+     {t:'Sim, porque 8 é ímpar',w:'8 é par (8 ÷ 2 = 4, não sobra nada).'},
+     {t:'Deu empate',w:'Não existe empate: o total 8 é par, então ganha o par.'}]},
+   {q:'Uma turma de 27 alunos vai dançar em pares. Todos vão conseguir par?', o:[
+     {t:'Não, 27 é ímpar: 1 aluno fica sem par',ok:1,w:'Certo! 27 ÷ 2 = 13 pares e sobra 1.'},
+     {t:'Sim, porque 27 é par',w:'27 termina em 7, então é ímpar.'},
+     {t:'Sim, porque 27 ÷ 2 é exata',w:'27 ÷ 2 = 13 e sobra 1: a divisão é não exata.'},
+     {t:'Não, porque sobram 2 alunos',w:'2 alunos formariam mais um par. Sobra só 1.'}]}
+  ]},
+{ id:'b9', emoji:'🧩', titulo:'Estação dos Problemas', tema:'Problemas com as quatro operações (adição, subtração, multiplicação e divisão)', pag:'p. 136 a 138, 141 a 143, 146 e 147', cor:'#5B6CD9',
+  html:`<p>Já conhecemos as <b>quatro operações</b>: adição (+), subtração (−), multiplicação (×) e divisão (÷). Para resolver um problema, o livro ensina <b>6 passos</b>:</p>
+<ol><li>Compreender a <b>situação-problema</b>.</li><li>Compreender a <b>pergunta</b>.</li><li>Identificar a <b>operação</b>.</li><li>Identificar os <b>dados</b>.</li><li>Efetuar o <b>cálculo</b>.</li><li><b>Responder</b> à pergunta.</li></ol>
+<p><b>Exemplo do livro:</b> Nicolas tem 8 anos e a irmã tem 23. Quantos anos ela é mais velha? Queremos saber quanto 23 tem <b>a mais</b> que 8 → <b>subtração</b>: 23 − 8 = <b>15 anos</b>.</p>
+<p><b>Outros exemplos:</b></p>
+<ul>
+<li>➕ Uma turma juntou 15 brinquedos num mês e 22 no outro. <b>Total</b>? 15 + 22 = <b>37</b>.</li>
+<li>➖ Havia 26 alunos e 3 saíram da sala. Quantos <b>ficaram</b>? 26 − 3 = <b>23</b>.</li>
+<li>✖️ 4 mangueiras com 20 mangas <b>em cada</b> → 4 × 20 = <b>80</b> mangas.</li>
+<li>➗ 27 alunos em <b>3 grupos iguais</b> → 27 ÷ 3 = <b>9</b> em cada grupo.</li>
+<li>➗ 28 alunos em grupos <b>de 4</b> → 28 ÷ 4 = <b>7 grupos</b>.</li>
+</ul>
+<div class="caixa">🧮 <b>Continhas de adição e subtração também caem!</b> Arme no papel: unidade embaixo de unidade, dezena embaixo de dezena, e comece pelas unidades.</div>`,
+  palavras:['quatro operações','situação-problema','6 passos'],
+  qs:[
+   {q:'Uma escola juntou 24 livros num mês e 38 no mês seguinte. Quantos livros juntou ao todo?', o:[
+     {t:'62 livros',ok:1,w:'Isso! "Ao todo" pede adição: 24 + 38 = 62.'},
+     {t:'14 livros',w:'14 é 38 − 24. "Ao todo" pede adição: 24 + 38 = 62.'},
+     {t:'52 livros',w:'Nas unidades, 4 + 8 = 12: fica 2 e a dezena vai junto. 24 + 38 = 62.'},
+     {t:'512 livros',w:'Não escrevemos os resultados lado a lado: 24 + 38 = 62.'}]},
+   {q:'Havia 31 alunos na sala e 6 foram para a biblioteca. Quantos ficaram na sala?', o:[
+     {t:'25 alunos',ok:1,w:'Muito bem! "Ficaram" pede subtração: 31 − 6 = 25.'},
+     {t:'37 alunos',w:'37 é 31 + 6. Se saíram alunos, a quantidade diminui: 31 − 6 = 25.'},
+     {t:'35 alunos',w:'Confira a conta: 31 − 6 = 25.'},
+     {t:'24 alunos',w:'Quase! 31 − 6 = 25 (31 − 1 = 30; 30 − 5 = 25).'}]},
+   {q:'Qual é o 3º passo para resolver um problema?', o:[
+     {t:'Identificar a operação matemática',ok:1,w:'Certo! 1º situação, 2º pergunta, 3º operação.'},
+     {t:'Responder à pergunta do problema',w:'Responder é o último passo (6º).'},
+     {t:'Efetuar o cálculo',w:'Calcular é o 5º passo.'},
+     {t:'Compreender a pergunta',w:'Compreender a pergunta é o 2º passo.'}]}
+  ]},
+{ id:'b10', emoji:'⏰', titulo:'Estação do Relógio', tema:'Horas, minutos e segundos; relógio analógico; horas cheias', pag:'p. 152 a 156', cor:'#C8402F',
+  html:`<p>Para cuidar da saúde (escovar os dentes, tomar banho, comer bem, dormir bem…) precisamos <b>organizar o dia</b>. Por isso o dia é dividido em <b>horas, minutos e segundos</b>, que são <b>unidades de medida de tempo</b>.</p>
+<div class="regra">📌 <b>60 segundos = 1 minuto</b> · <b>60 minutos = 1 hora</b> · <b>24 horas = 1 dia</b></div>
+<p>🕰️ O <b>relógio analógico</b> tem pelo menos <b>dois ponteiros</b>: o <b>menor</b> mostra as <b>horas</b> e o <b>maior</b> mostra os <b>minutos</b>.</p>
+<div class="relogios"><figure>${relogio(8,0)}<figcaption>menor no 8, maior no 12<br><b>8 horas</b> (no digital: 8:00)</figcaption></figure>
+<figure>${relogio(11,0)}<figcaption>menor no 11, maior no 12<br><b>11 horas</b></figcaption></figure></div>
+<div class="regra">📌 <b>Hora cheia:</b> o ponteiro dos <b>minutos</b> (o maior) aponta para o <b>12</b>. Aí olhamos só o ponteiro menor.</div>
+<p>🔁 O relógio vai até o 12, mas o dia tem 24 horas. Por isso o ponteiro das horas dá <b>2 voltas completas</b> por dia: uma de manhã e outra à tarde e à noite.</p>
+<p>No livro: Melissa escovou os dentes às <b>7 horas da manhã</b>; Renato tomou café às <b>9 horas</b>; Pablo lavou as mãos à <b>1 hora da tarde</b>; Jeremias tomou banho às <b>4 horas da tarde</b>.</p>`,
+  palavras:['ponteiro menor = horas','ponteiro maior = minutos','hora cheia','60 s = 1 min','60 min = 1 h','24 h = 1 dia'],
+  qs:[
+   {q:`Que horas o relógio está marcando? ${relogio(3,0,{t:100})}`, o:[
+     {t:'3 horas',ok:1,w:'Isso! O maior está no 12 (hora cheia) e o menor está no 3.'},
+     {t:'12 horas e 15 minutos',w:'Você trocou os ponteiros. O MENOR (horas) está no 3 e o maior no 12: 3 horas.'},
+     {t:'12 horas',w:'O ponteiro no 12 é o maior (minutos). O menor está no 3: 3 horas.'},
+     {t:'6 horas',w:'Olhe o ponteiro menor: ele está no 3. São 3 horas.'}]},
+   {q:'Quantas voltas completas o ponteiro das HORAS dá no relógio em 1 dia?', o:[
+     {t:'2 voltas',ok:1,w:'Muito bem! Cada volta são 12 horas; 1 dia tem 24 horas: 2 voltas.'},
+     {t:'1 volta',w:'Uma volta são só 12 horas. O dia tem 24 horas: 2 voltas.'},
+     {t:'12 voltas',w:'O relógio tem 12 números, mas o ponteiro das horas dá 2 voltas por dia.'},
+     {t:'24 voltas',w:'24 é o número de horas do dia. Como cada volta tem 12 horas, são 2 voltas.'}]},
+   {q:'Quando o relógio marca uma hora cheia, para onde aponta o ponteiro dos MINUTOS?', o:[
+     {t:'Para o 12',ok:1,w:'Certo! Na hora cheia o ponteiro maior fica no 12.'},
+     {t:'Para o 6',w:'No 6 o ponteiro dos minutos marca 30 minutos. Na hora cheia ele está no 12.'},
+     {t:'Para o 1',w:'No 1 ele marca 5 minutos. Na hora cheia ele está no 12.'},
+     {t:'Para o número da hora',w:'Quem aponta para o número da hora é o ponteiro MENOR. O maior fica no 12.'}]}
+  ]},
+{ id:'b11', emoji:'⏱️', titulo:'Estação dos Minutos', tema:'Como contar os minutos no relógio', pag:'p. 157 a 159', cor:'#2F6FD6',
+  html:`<p>Agora vamos ler os <b>minutos</b> no relógio analógico.</p>
+<div class="regra">📌 <b>Cada risquinho</b> que aparece no relógio vale <b>1 minuto</b>.</div>
+<p>O ponteiro dos minutos (o maior) gira sempre no mesmo sentido, chamado <b>sentido horário</b>. Para ir de <b>um número ao outro</b>, ele leva <b>5 minutos</b> (são 5 risquinhos).</p>
+<table class="mini"><tr><th>Ponteiro maior no</th><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td><td>10</td><td>11</td><td>12</td></tr>
+<tr><th>Minutos (saindo do 12)</th><td>5</td><td>10</td><td>15</td><td>20</td><td>25</td><td>30</td><td>35</td><td>40</td><td>45</td><td>50</td><td>55</td><td>60</td></tr></table>
+<p>É só contar <b>de 5 em 5</b>! Veja o caminho em roxo, saindo do 12:</p>
+<div class="relogios"><figure>${relogio(12,15,{arco:true})}<figcaption>do 12 ao 3<br><b>15 minutos</b></figcaption></figure>
+<figure>${relogio(12,40,{arco:true})}<figcaption>do 12 ao 8<br><b>40 minutos</b></figcaption></figure>
+<figure>${relogio(12,60,{arco:true})}<figcaption>volta inteira<br><b>60 minutos = 1 hora</b></figcaption></figure></div>`,
+  palavras:['risquinho = 1 minuto','número a número = 5 minutos','sentido horário','volta inteira = 60 minutos'],
+  qs:[
+   {q:'O ponteiro dos minutos saiu do 12 e parou no 4. Quantos minutos passaram?', o:[
+     {t:'20 minutos',ok:1,w:'Isso! 5, 10, 15, 20 — ou 4 × 5 = 20.'},
+     {t:'4 minutos',w:'Cada NÚMERO vale 5 minutos (cada risquinho é que vale 1). Do 12 ao 4: 20 minutos.'},
+     {t:'40 minutos',w:'40 minutos seria parar no 8. No 4 são 20 minutos.'},
+     {t:'16 minutos',w:'Conte de 5 em 5: 5, 10, 15, 20.'}]},
+   {q:`Quantos minutos o ponteiro maior andou (caminho roxo), saindo do 12? ${relogio(12,45,{arco:true,t:100})}`, o:[
+     {t:'45 minutos',ok:1,w:'Muito bem! Do 12 até o 9: 9 × 5 = 45 minutos.'},
+     {t:'9 minutos',w:'O ponteiro parou no 9, mas cada número vale 5 minutos: 45 minutos.'},
+     {t:'90 minutos',w:'Uma volta inteira são só 60 minutos. Até o 9 são 45 minutos.'},
+     {t:'40 minutos',w:'40 minutos seria parar no 8. Ele parou no 9: 45 minutos.'}]},
+   {q:'Como se chama o sentido em que o ponteiro dos minutos gira?', o:[
+     {t:'Sentido horário',ok:1,w:'Certo! É o nome que o livro dá.'},
+     {t:'Sentido anti-horário',w:'Anti-horário é o contrário. Os ponteiros giram no sentido horário.'},
+     {t:'Sentido da hora cheia',w:'Hora cheia é quando o maior está no 12. O sentido se chama horário.'},
+     {t:'Sentido do ponteiro menor',w:'Os dois ponteiros giram no mesmo sentido: o sentido horário.'}]}
+  ]},
+{ id:'b12', emoji:'🏁', titulo:'Estação Final', tema:'Revisão geral: tudo misturado', pag:'Unidades 9, 10 e 11', cor:'#3B3A45',
+  html:`<p class="narrador">Tchuca diz: "Última parada antes da prova! Aqui as perguntas misturam tudo o que você viu. Respire fundo e faça as contas no papel."</p>
+<ul><li>✖️ Multiplicação = parcelas iguais; fileiras × quantidade em cada fileira; decomposição.</li>
+<li>➗ Divisão = repartir em partes iguais; exata ou não exata; resto; decomposição; subtrações sucessivas.</li>
+<li>🎲 Par termina em 0, 2, 4, 6, 8; ímpar termina em 1, 3, 5, 7, 9.</li>
+<li>⏰ Menor = horas; maior = minutos; hora cheia = maior no 12; número a número = 5 minutos.</li></ul>`,
+  palavras:['revisão','tudo misturado'],
+  qs:[
+   {q:'Uma professora tem 30 lápis para dividir igualmente entre 4 grupos. Cada grupo recebe quantos lápis, e quantos sobram?', o:[
+     {t:'7 lápis, e sobram 2',ok:1,w:'Isso! 4 × 7 = 28 e 30 − 28 = 2.'},
+     {t:'8 lápis, e não sobra nada',w:'4 × 8 = 32, e só há 30 lápis. Cada grupo recebe 7 e sobram 2.'},
+     {t:'7 lápis, e não sobra nada',w:'4 × 7 = 28, não 30. Sobram 2 lápis.'},
+     {t:'6 lápis, e sobram 6',w:'Com 6 de sobra ainda dá para dar mais 1 para cada grupo. O certo: 7 e sobram 2.'}]},
+   {q:'Um padeiro arrumou pães em 5 fileiras com 7 pães em cada uma. O total de pães é um número par ou ímpar?', o:[
+     {t:'Ímpar, porque 5 × 7 = 35',ok:1,w:'Muito bem! 35 termina em 5: é ímpar.'},
+     {t:'Par, porque 5 × 7 = 35',w:'A conta está certa, mas 35 termina em 5: é ímpar.'},
+     {t:'Par, porque 5 + 7 = 12',w:'Fileiras iguais pedem multiplicação: 5 × 7 = 35, que é ímpar.'},
+     {t:'Ímpar, porque 5 × 7 = 57',w:'5 × 7 = 35 (não 57). E 35 é ímpar.'}]},
+   {q:'O relógio marca hora cheia e o ponteiro menor está no 5. Que horas são?', o:[
+     {t:'5 horas',ok:1,w:'Certo! Hora cheia: o maior está no 12 e o menor mostra a hora: 5.'},
+     {t:'5 minutos',w:'O ponteiro menor mostra as HORAS. São 5 horas.'},
+     {t:'12 horas e 5 minutos',w:'Na hora cheia o maior está no 12 marcando 0 minutos. São 5 horas.'},
+     {t:'25 minutos',w:'25 minutos seria o ponteiro MAIOR no 5. Aqui é o menor: 5 horas.'}]}
+  ]}
+];
+
+// ----- Mapa Mental: ramos e lacunas (a errada vem de outro ramo do mesmo mapa) -----
+const RAMOS = [
+ {nome:'✖️ Multiplicação', cor:'#E0483E', nos:[
+   ['4 + 4 + 4 + 4 + 4 é uma adição de parcelas ', {id:'L1',certa:'iguais',errada:'ímpares'}, ' → 5 × 4 = 20.'],
+   ['Em 3 × 5 = 15, o 3 e o 5 são ', {id:'L2',certa:'fatores',errada:'restos'}, ', e o 15 é o produto.'],
+   ['13 × 3 por ', {id:'L3',certa:'decomposição',errada:'subtrações sucessivas'}, ': 3 × 10 + 3 × 3 = 30 + 9 = 39.'],
+   'Fileiras × quantidade em cada fileira = total. Dobro = × 2.']},
+ {nome:'➗ Divisão', cor:'#F28C28', nos:[
+   ['Repartiu em partes iguais e não sobrou nada: divisão ', {id:'L4',certa:'exata',errada:'horária'}, '.'],
+   ['O que sobra na divisão se chama ', {id:'L5',certa:'resto',errada:'produto'}, '.'],
+   ['Tirar 6 de 40 várias vezes: método das ', {id:'L6',certa:'subtrações sucessivas',errada:'parcelas iguais'}, '.'],
+   '69 ÷ 3 → 60 ÷ 3 + 9 ÷ 3 = 20 + 3 = 23.']},
+ {nome:'🎲 Par ou ímpar', cor:'#D9488F', nos:[
+   ['Dividido por 2 e não sobra nada: número ', {id:'L7',certa:'par',errada:'fator'}, '.'],
+   'Par termina em 0, 2, 4, 6, 8. Ímpar termina em 1, 3, 5, 7, 9.']},
+ {nome:'🧩 Problemas', cor:'#5B6CD9', nos:[
+   '6 passos: situação → pergunta → operação → dados → cálculo → resposta.',
+   ['"Quantos anos a mais?" → conta de ', {id:'L8',certa:'subtração',errada:'multiplicação'}, '.']]},
+ {nome:'⏰ Relógio', cor:'#2F6FD6', nos:[
+   ['Ponteiro MENOR → ', {id:'L9',certa:'horas',errada:'dezenas'}, ' · ponteiro MAIOR → minutos.'],
+   ['Hora cheia: o ponteiro dos minutos aponta para o ', {id:'L10',certa:'12',errada:'2'}, '.'],
+   ['Os ponteiros giram no sentido ', {id:'L11',certa:'horário',errada:'exato'}, '; de um número a outro: 5 minutos.'],
+   '60 s = 1 min · 60 min = 1 h · 24 h = 1 dia.']}
+];
+
+// ----- Verdadeiro ou Falso (banco de 26; sorteia 12) -----
+const VF = [
+ {f:'5 × 4 é o mesmo que 4 + 4 + 4 + 4 + 4.', v:1, e:'Verdadeiro. 5 vezes 4 é somar o 4 cinco vezes: dá 20.'},
+ {f:'3 × 6 é o mesmo que 3 + 6.', v:0, e:'Falso. 3 + 6 = 9, mas 3 × 6 = 6 + 6 + 6 = 18.'},
+ {f:'Em 7 × 3 = 21, o número 21 é o produto.', v:1, e:'Verdadeiro. O resultado da multiplicação se chama produto.'},
+ {f:'Em 2 × 9 = 18, os fatores são 2 e 18.', v:0, e:'Falso. Os fatores são 2 e 9 (os números multiplicados). O 18 é o produto.'},
+ {f:'O sinal de igual (=) tem duas retas paralelas porque nada é mais igual do que elas.', v:1, e:'Verdadeiro. Foi assim que Robert Recorde explicou o sinal, em 1557.'},
+ {f:'Uma caixa com 4 fileiras de 6 ovos tem 10 ovos.', v:0, e:'Falso. Fileiras iguais: 4 × 6 = 24 ovos (10 seria 4 + 6).'},
+ {f:'Para calcular 3 × 24 podemos fazer 3 × 20 + 3 × 4 = 60 + 12 = 72.', v:1, e:'Verdadeiro. É a multiplicação por decomposição.'},
+ {f:'Se 1 pacote custa 5 reais, 6 pacotes custam 11 reais.', v:0, e:'Falso. 6 × 5 = 30 reais.'},
+ {f:'Com 40 reais dá para comprar 10 barras de cereal de 4 reais cada.', v:1, e:'Verdadeiro. 10 × 4 = 40.'},
+ {f:'Uma divisão é exata quando sobra resto.', v:0, e:'Falso. Exata é quando NÃO sobra nada. Com resto, é não exata.'},
+ {f:'13 biscoitos divididos entre 4 crianças: cada uma recebe 3 e sobra 1.', v:1, e:'Verdadeiro. 4 × 3 = 12 e 13 − 12 = 1 de resto.'},
+ {f:'20 ÷ 2 = 10, porque 2 × 10 = 20.', v:1, e:'Verdadeiro. A multiplicação confere a divisão.'},
+ {f:'Dividindo 40 blusas entre 6 crianças, cada uma recebe 6 e sobram 2.', v:0, e:'Falso. 6 × 6 = 36 e 40 − 36 = 4. Sobram 4.'},
+ {f:'Para dividir 69 por 3, podemos fazer 60 ÷ 3 = 20 e 9 ÷ 3 = 3. O resultado é 23.', v:1, e:'Verdadeiro. É a divisão por decomposição: 20 + 3 = 23.'},
+ {f:'Todo número terminado em 0, 2, 4, 6 ou 8 é par.', v:1, e:'Verdadeiro. Olhamos o algarismo das unidades.'},
+ {f:'O número 73 é par.', v:0, e:'Falso. 73 termina em 3: é ímpar.'},
+ {f:'Uma turma de 29 alunos consegue dançar em pares sem sobrar ninguém.', v:0, e:'Falso. 29 é ímpar: sobra 1 aluno sem par.'},
+ {f:'No par ou ímpar, se um mostra 4 dedos e o outro mostra 5, ganha quem escolheu ímpar.', v:1, e:'Verdadeiro. 4 + 5 = 9, que é ímpar.'},
+ {f:'No relógio analógico, o ponteiro menor indica as horas.', v:1, e:'Verdadeiro. O menor mostra as horas e o maior, os minutos.'},
+ {f:'Quando o relógio marca hora cheia, o ponteiro dos minutos aponta para o 6.', v:0, e:'Falso. Na hora cheia ele aponta para o 12.'},
+ {f:'1 hora tem 60 minutos e 1 dia tem 24 horas.', v:1, e:'Verdadeiro. São unidades de medida de tempo.'},
+ {f:'Cada risquinho do relógio vale 5 minutos.', v:0, e:'Falso. Cada risquinho vale 1 minuto. De um NÚMERO a outro é que são 5 minutos.'},
+ {f:'Se o ponteiro dos minutos sai do 12 e chega ao 3, passaram 15 minutos.', v:1, e:'Verdadeiro. 5, 10, 15.'},
+ {f:'Do número 1 ao número 2 do relógio, o ponteiro dos minutos leva 1 minuto.', v:0, e:'Falso. De um número a outro ele leva 5 minutos.'},
+ {f:'O primeiro passo para resolver um problema é compreender a situação-problema.', v:1, e:'Verdadeiro. Depois vêm a pergunta, a operação, os dados, o cálculo e a resposta.'},
+ {f:'Se 3 dos 26 alunos saíram da sala, ficaram 29 alunos.', v:0, e:'Falso. Saíram alunos: 26 − 3 = 23.'}
+];
+
+// ----- Mini-quiz relâmpago do Resumo -----
+const RELAMPAGO = [
+ ['7 + 7 + 7 escrito como multiplicação?', '3 × 7 = 21'],
+ ['"Que fator sou eu?": o colega tem 5 e o produto é 30. Qual é a minha carta?', 'Eu sou o 6 (6 × 5 = 30).'],
+ ['5 × 32 por decomposição?', '5 × 30 + 5 × 2 = 150 + 10 = 160'],
+ ['29 ÷ 4?', '7 e resto 1 (4 × 7 = 28).'],
+ ['96 ÷ 3 por decomposição?', '90 ÷ 3 + 6 ÷ 3 = 30 + 2 = 32'],
+ ['O 58 é par ou ímpar?', 'Par (termina em 8).'],
+ ['O ponteiro maior saiu do 12 e parou no 7. Quantos minutos?', '35 minutos'],
+ ['Quantas horas tem 1 dia?', '24 horas']
+];
+
+// ----- Linha do tempo do Resumo (livro p. 156) -----
+const LINHA = [
+ [7,'7 horas da manhã','escovar os dentes 🪥'],
+ [9,'9 horas da manhã','tomar café da manhã ☕'],
+ [10,'10 horas da manhã','andar de bicicleta 🚲'],
+ [1,'1 hora da tarde','lavar as mãos 🧼'],
+ [4,'4 horas da tarde','tomar banho 🛁']
+];
+
+// ----- Simulado (25 questões inéditas, no estilo das atividades do livro) -----
+// formato: [texto, 1, explicação] = certa ; [texto, explicação] = errada ; d = dica
+const SIM = [
+ {q:'Qual multiplicação representa a adição 6 + 6 + 6 + 6 + 6 + 6 + 6?', o:[['7 × 6 = 42',1,'São 7 parcelas iguais a 6: 7 × 6 = 42.'],['6 × 6 = 36','Conte de novo: são 7 parcelas de 6, não 6.'],['7 + 6 = 13','Isso soma o número de parcelas com o 6. O certo é multiplicar: 7 × 6 = 42.'],['7 × 7 = 49','Cada parcela vale 6, não 7: 7 × 6 = 42.']], d:'Conte quantas parcelas iguais existem: esse é o primeiro fator.'},
+ {q:'Uma padeira arrumou pães numa bandeja com 4 fileiras e 8 pães em cada fileira. Depois vendeu 5 pães. Quantos pães ficaram na bandeja?', o:[['27 pães',1,'Primeiro 4 × 8 = 32 pães; depois 32 − 5 = 27.'],['32 pães','32 é o total antes da venda. Ela vendeu 5: 32 − 5 = 27.'],['37 pães','Ela vendeu pães, então a quantidade diminui: 32 − 5 = 27.'],['7 pães','7 seria 4 + 8 − 5. Fileiras iguais pedem multiplicação: 4 × 8 = 32; 32 − 5 = 27.']], d:'Problema de dois passos: primeiro descubra o total, depois tire os vendidos.'},
+ {q:'No jogo "Que fator sou eu?", o Mestre multiplicador disse: "O produto é 40". A carta do seu colega é 10. Qual é a sua carta?', o:[['4',1,'4 × 10 = 40, então você é o 4.'],['30','30 é 40 − 10. O jogo é de multiplicação: que número × 10 dá 40?'],['50','50 é 40 + 10. Procure o número que vezes 10 dá 40: 4.'],['400','400 é 40 × 10. Queremos o número que vezes 10 dá 40: 4.']], d:'Pense: ? × 10 = 40.'},
+ {q:'Na tabela da multiplicação, qual número fica no cruzamento da linha 5 com a coluna 9?', o:[['45',1,'No cruzamento fica o produto: 5 × 9 = 45.'],['14','14 é 5 + 9. Na tabela da multiplicação o cruzamento é 5 × 9 = 45.'],['59','Não se escrevem os números lado a lado: 5 × 9 = 45.'],['40','40 é 5 × 8 (coluna 8). Na coluna 9: 5 × 9 = 45.']], d:'Cruzamento da linha com a coluna = linha × coluna.'},
+ {q:'Um picolé custa 3 reais. No quadro de preços: 1 picolé → 3 reais, 2 picolés → 6 reais, 3 picolés → 9 reais… Quanto custam 8 picolés?', o:[['24 reais',1,'8 × 3 = 24 (3, 6, 9, 12, 15, 18, 21, 24).'],['11 reais','11 é 8 + 3. O preço vai de 3 em 3: 8 × 3 = 24.'],['21 reais','21 reais são 7 picolés. 8 picolés: 24 reais.'],['27 reais','27 reais são 9 picolés. 8 picolés: 24 reais.']], d:'Cada linha do quadro aumenta +3.'},
+ {q:'Cada lápis custa 5 reais. Com 45 reais, quantos lápis dá para comprar?', o:[['9 lápis',1,'9 × 5 = 45.'],['40 lápis','40 é 45 − 5. Quantas vezes o 5 cabe em 45? 9 vezes.'],['50 lápis','50 é 45 + 5. Procure o número que × 5 dá 45: 9.'],['8 lápis','8 lápis custam 40 reais. Com 45 reais dá para 9.']], d:'Conte de 5 em 5 até chegar a 45.'},
+ {q:'Cada garrafa de suco custa 10 reais. Quantas garrafas dá para comprar com 130 reais?', o:[['13 garrafas',1,'13 × 10 = 130.'],['12 garrafas','12 garrafas custam 120 reais. Com 130 dá para 13.'],['10 garrafas','O quadro continua depois do 10: 130 reais compram 13 garrafas.'],['120 garrafas','120 é 130 − 10. Cada garrafa custa 10: 13 garrafas.']], d:'De 10 em 10: 100, 110, 120, 130…'},
+ {q:'Usando a decomposição, quanto é 4 × 36?', o:[['144',1,'36 = 30 + 6 → 4 × 30 = 120 e 4 × 6 = 24 → 120 + 24 = 144.'],['124','Confira as unidades: 4 × 6 = 24. Então 120 + 24 = 144.'],['1224','Os resultados não ficam lado a lado: somamos 120 + 24 = 144.'],['40','40 é 4 + 36. Para multiplicar: 4 × 30 + 4 × 6 = 144.']], d:'Separe 36 em 30 + 6 e multiplique cada parte por 4.'},
+ {q:'Uma loja vende uma bicicleta assim: entrada de 50 reais mais 6 parcelas de 25 reais. Qual é o preço total da bicicleta?', o:[['200 reais',1,'6 × 25 = 150 e 150 + 50 = 200.'],['150 reais','150 é só o valor das parcelas. Falta somar a entrada: 200.'],['81 reais','81 é 50 + 6 + 25. Primeiro multiplique: 6 × 25 = 150; depois some 50.'],['175 reais','175 seriam 5 parcelas. São 6 parcelas: 150 + 50 = 200.']], d:'Multiplique as parcelas e depois some a entrada.'},
+ {q:'Para cada convidado, uma cozinheira prepara 3 coxinhas e 2 pastéis. Para 30 convidados, quantos salgados ela prepara ao todo?', o:[['150 salgados',1,'Coxinhas: 30 × 3 = 90. Pastéis: 30 × 2 = 60. Total: 90 + 60 = 150.'],['90 salgados','90 são só as coxinhas. Faltam os 60 pastéis: 150.'],['35 salgados','35 é 30 + 3 + 2. Precisamos multiplicar por convidado: 150.'],['60 salgados','60 são só os pastéis. Com as 90 coxinhas: 150.']], d:'"Para cada convidado" pede multiplicação. São dois tipos de salgado: some no fim.'},
+ {q:'Qual é o dobro do dobro de 15?', o:[['60',1,'Dobro de 15 = 30; dobro de 30 = 60.'],['30','30 é só o dobro de 15. O dobro do dobro é o dobro de 30: 60.'],['45','45 é o triplo de 15 (3 × 15). O dobro do dobro é 60.'],['17','17 é 15 + 2. Dobro é × 2: 15 → 30 → 60.']], d:'Como no Jogo do dobro: dobre uma vez, depois dobre de novo.'},
+ {q:'Um entregador trabalha 7 horas por dia, de segunda a sábado. Quantas horas ele trabalha na semana?', o:[['42 horas',1,'De segunda a sábado são 6 dias: 6 × 7 = 42.'],['35 horas','35 seriam 5 dias (segunda a sexta). Até sábado são 6 dias: 42.'],['49 horas','49 seriam 7 dias (semana inteira). De segunda a sábado: 6 dias, 42 horas.'],['13 horas','13 é 7 + 6. São 6 dias de 7 horas: 6 × 7 = 42.']], d:'Conte os dias: segunda, terça, quarta, quinta, sexta, sábado.'},
+ {q:'Três amigos vão dividir 18 balas igualmente. Qual sentença mostra a conta certa e a prova?', o:[['18 ÷ 3 = 6, porque 3 × 6 = 18',1,'Dividimos 18 por 3 e conferimos com a multiplicação.'],['18 ÷ 3 = 15, porque 18 − 3 = 15','Dividir não é tirar 3 uma vez só. 18 ÷ 3 = 6.'],['18 ÷ 3 = 21, porque 18 + 3 = 21','Dividir não é somar. 18 ÷ 3 = 6.'],['18 ÷ 3 = 9, porque 2 × 9 = 18','Isso seria dividir por 2. Por 3: 3 × 6 = 18 → 6.']], d:'A divisão se confere com a multiplicação.'},
+ {q:'Nina e seus 3 irmãos vão dividir 22 figurinhas igualmente. Cada um recebe quantas, e quantas sobram?', o:[['5 para cada, e sobram 2',1,'São 4 crianças: 4 × 5 = 20 e 22 − 20 = 2.'],['7 para cada, e sobra 1','Isso seria dividir por 3. Nina também recebe: são 4 crianças.'],['11 para cada, e não sobra nada','Isso seria dividir por 2. São 4 crianças: 5 e sobram 2.'],['5 para cada, e não sobra nada','4 × 5 = 20, e 22 − 20 = 2. Sobram 2.']], d:'Conte quem entra na divisão: Nina + 3 irmãos.'},
+ {q:'Qual destas divisões NÃO é exata?', o:[['35 ÷ 6',1,'35 ÷ 6 = 5 e sobram 5 (6 × 5 = 30).'],['30 ÷ 5','30 ÷ 5 = 6 e não sobra nada: é exata.'],['28 ÷ 4','28 ÷ 4 = 7 e não sobra nada: é exata.'],['40 ÷ 10','40 ÷ 10 = 4 e não sobra nada: é exata.']], d:'Não exata = sobra resto.'},
+ {q:'Usando a decomposição, quanto é 96 ÷ 3?', o:[['32',1,'96 = 90 + 6 → 90 ÷ 3 = 30 e 6 ÷ 3 = 2 → 30 + 2 = 32.'],['33','Confira as unidades: 6 ÷ 3 = 2. Então 30 + 2 = 32.'],['23','Confira: 3 × 23 = 69, não 96. O 9 vale 90: 90 ÷ 3 = 30 → 32.'],['302','Os resultados não ficam lado a lado: somamos 30 + 2 = 32.']], d:'Separe 96 em 90 + 6 e divida cada parte por 3.'},
+ {q:'Pelo método das subtrações sucessivas, qual é o resultado de 50 ÷ 8?', o:[['6, e resto 2',1,'50 → 42 → 34 → 26 → 18 → 10 → 2: tirei 8 seis vezes e sobraram 2.'],['6, e resto 0','6 × 8 = 48, e 50 − 48 = 2. Sobram 2.'],['5, e resto 10','Com 10 ainda dá para tirar 8! Continue: 6 e resto 2.'],['7, e resto 2','7 × 8 = 56, que passa de 50. São 6 vezes e resto 2.']], d:'Pare de subtrair quando o que sobrou for menor que 8.'},
+ {q:'Quanto é 74 ÷ 10?', o:[['7, e resto 4',1,'7 × 10 = 70 e 74 − 70 = 4.'],['74, e resto 0','74 ÷ 1 é que dá 74. Por 10: 7 e resto 4.'],['4, e resto 7','Trocou: o 10 cabe 7 vezes em 74 e sobram 4.'],['7, e resto 0','7 × 10 = 70, não 74. Sobram 4.']], d:'Quantas dezenas cabem em 74? E quantas unidades sobram?'},
+ {q:'Uma turma de 33 alunos vai fazer uma dança em pares. O que acontece?', o:[['Formam 16 pares e 1 aluno fica sem par',1,'33 é ímpar: 33 ÷ 2 = 16 e sobra 1.'],['Formam 33 pares','Cada par tem 2 alunos. 33 alunos formam 16 pares e sobra 1.'],['Formam 16 pares e ninguém sobra','16 pares são 32 alunos. Com 33, sobra 1.'],['Formam 15 pares e sobram 3','Com 3 sobrando ainda dá mais um par. São 16 pares e sobra 1.']], d:'Número ímpar dividido por 2 sempre sobra 1.'},
+ {q:'Numa rua, as casas de um lado têm só números pares. Qual destes números pode estar desse lado?', o:[['248',1,'248 termina em 8: é par.'],['135','135 termina em 5: é ímpar.'],['371','371 termina em 1: é ímpar.'],['529','529 termina em 9: é ímpar.']], d:'Olhe o último algarismo.'},
+ {q:'No par ou ímpar, Téo escolheu PAR e mostrou 4 dedos. Lia mostrou 7 dedos. Quem ganhou?', o:[['Lia, porque 4 + 7 = 11, que é ímpar',1,'O total é 11, ímpar. Téo escolheu par, então Lia ganhou.'],['Téo, porque 4 é par','Não olhamos só uma mão: o total é 4 + 7 = 11, ímpar.'],['Téo, porque 11 é par','11 termina em 1: é ímpar.'],['Ninguém, deu empate','No par ou ímpar não há empate: o total 11 é ímpar.']], d:'Some os dedos dos dois e veja se o total é par ou ímpar.'},
+ {q:'Uma turma arrecadou 356 brinquedos num mês e 287 no mês seguinte. Quantos brinquedos arrecadou no total?', o:[['643',1,'356 + 287: unidades 6 + 7 = 13 (fica 3, vai 1); dezenas 5 + 8 + 1 = 14 (fica 4, vai 1); centenas 3 + 2 + 1 = 6 → 643.'],['633','Faltou somar 1 dezena que veio das unidades: 5 + 8 + 1 = 14 → 643.'],['543','Faltou somar 1 centena que veio das dezenas: 3 + 2 + 1 = 6 → 643.'],['653','Confira as dezenas: 5 + 8 + 1 = 14, fica 4 → 643.']], d:'Arme a conta e comece pelas unidades.'},
+ {q:'Um sítio tinha 503 mangas e vendeu 168. Quantas mangas sobraram?', o:[['335',1,'503 − 168 = 335. Confira: 335 + 168 = 503.'],['465','Não podemos tirar o menor do maior em cada coluna (8 − 3). Fazendo certo: 335.'],['345','Confira: 345 + 168 = 513, não 503. O certo é 335.'],['435','Confira: 435 + 168 = 603, não 503. O certo é 335.']], d:'Confira a subtração somando: resultado + 168 tem que dar 503.'},
+ {q:`Um menino tomou banho, à tarde, na hora mostrada no relógio. A que horas ele tomou banho? ${relogio(4,0,{t:100})}`, o:[['4 horas da tarde',1,'Hora cheia: o maior está no 12 e o menor está no 4.'],['12 horas e 20 minutos','Você trocou os ponteiros: o menor (horas) está no 4.'],['4 horas da manhã','O enunciado diz que foi à tarde.'],['12 horas','O 12 é o ponteiro maior (minutos). O menor está no 4.']], d:'Menor = horas, maior = minutos.'},
+ {q:`O ponteiro dos minutos saiu do 12 e fez o caminho em roxo. Quanto tempo passou? ${relogio(12,40,{arco:true,t:100})}`, o:[['40 minutos',1,'Ele parou no 8: 8 × 5 = 40 minutos.'],['8 minutos','Cada NÚMERO vale 5 minutos: do 12 ao 8 são 40.'],['45 minutos','45 minutos seria parar no 9. Ele parou no 8: 40.'],['80 minutos','Uma volta inteira tem só 60 minutos. Até o 8: 40 minutos.']], d:'Conte de 5 em 5 a cada número.'}
+];
+// ===================== LÓGICA =====================
+const SLUG = 'mat3expresso';
+const SEED_LEIT = 11, SEED_SIM = 7, SEED_MAPA = 3;
+const K = { leitura:SLUG+'_leitura_v1', mapa:SLUG+'_mapa_v1', vf:SLUG+'_vf_v1', resumo:SLUG+'_resumo_v1', simulado:SLUG+'_simulado_v1', trilha:SLUG+'_trilha_v1' };
+const CODIGO_PAIS = 'PAIS-77';
+const MEM = {};
+function ler(k){ try{ const v = localStorage.getItem(k); if(v!==null) return JSON.parse(v); }catch(e){} return MEM[k] ? JSON.parse(MEM[k]) : null; }
+function gravar(k,o){ const s = JSON.stringify(o); MEM[k] = s; try{ localStorage.setItem(k,s); }catch(e){} }
+function apagar(k){ delete MEM[k]; try{ localStorage.removeItem(k); }catch(e){} }
+
+let S = {};
+function carregar(){
+  S.leitura  = ler(K.leitura)  || {resp:{}, concluido:false};
+  S.mapa     = ler(K.mapa)     || {pecas:{}, concluido:false};
+  S.vf       = ler(K.vf)       || {melhor:null, rodadas:0, historico:[], concluido:false};
+  S.resumo   = ler(K.resumo)   || {maxRolagem:0, concluido:false};
+  S.simulado = ler(K.simulado) || {resp:{}, enviado:false, concluido:false};
+  S.trilha   = ler(K.trilha)   || {liberadoPelosPais:false, liberadoEm:null, vistos:{}, historico:[]};
+  if(!S.trilha.vistos) S.trilha.vistos = {};
+  if(!S.trilha.historico) S.trilha.historico = [];
+}
+function salvar(nome){ S[nome].salvoEm = new Date().toISOString(); gravar(K[nome], S[nome]); atualizarPainel(); renderTrilha(); }
+function concluir(nome){ if(!S[nome].concluido){ S[nome].concluido = true; S[nome].concluidoEm = new Date().toISOString(); } }
+
+// ---------- utilidades ----------
+function hashStr(s){ let h = 2166136261; for(let i=0;i<s.length;i++){ h ^= s.charCodeAt(i); h = Math.imul(h,16777619); } return h>>>0; }
+function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+function embaralhar(arr, seed){ const r = mulberry32(seed); const a = arr.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function dataBR(iso){ if(!iso) return '—'; const d=new Date(iso); const p=n=>String(n).padStart(2,'0'); return `${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}`; }
+const $ = id => document.getElementById(id);
+const LETRAS = ['a','b','c','d'];
+
+// ---------- modal ----------
+function abrirModal(html, botoes){
+  const m = $('modal'); m.innerHTML = html + '<div style="margin-top:14px" id="modalBts"></div>';
+  (botoes||[{t:'OK', cls:'btn'}]).forEach(b=>{ const el=document.createElement('button'); el.className=b.cls||'btn'; el.textContent=b.t; el.onclick=()=>{ fecharModal(); if(b.fn) b.fn(); }; $('modalBts').appendChild(el); });
+  $('fundoModal').classList.add('aberto');
+}
+function fecharModal(){ $('fundoModal').classList.remove('aberto'); }
+
+// ---------- trilha ----------
+const ETAPAS = [
+  {id:'leitura', nome:'Leitura Estendida', ic:'📖'},
+  {id:'mapa', nome:'Mapa Mental para encaixar', ic:'🧠'},
+  {id:'vf', nome:'Verdadeiro ou Falso', ic:'✅'},
+  {id:'resumo', nome:'Resumo', ic:'🗺️'},
+  {id:'simulado', nome:'Simulado', ic:'📝'}
+];
+const idxEtapa = id => ETAPAS.findIndex(e=>e.id===id);
+function feito(id){ return !!(S[id] && S[id].concluido); }
+function aberta(i){ if(i<=0) return true; if(S.trilha.liberadoPelosPais) return true; return feito(ETAPAS[i-1].id) || feito(ETAPAS[i].id); }
+const TOTAL_PERG = BLOCOS.reduce((s,b)=>s+b.qs.length,0);
+function blocoFeito(b){ return b.qs.every((q,qi)=>S.leitura.resp[b.id+'_'+qi]); }
+function blocosFeitos(){ return BLOCOS.filter(blocoFeito).length; }
+const PECAS = []; RAMOS.forEach(r=>r.nos.forEach(n=>{ if(Array.isArray(n)) n.forEach(p=>{ if(typeof p==='object') PECAS.push(p); }); }));
+const TOTAL_PECAS = PECAS.length;
+function pecasFeitas(){ return PECAS.filter(p=>S.mapa.pecas[p.id] && S.mapa.pecas[p.id].feita).length; }
+function faltaTexto(i){
+  const ant = ETAPAS[i-1].id;
+  if(ant==='leitura') return `Destrava quando você terminar as ${BLOCOS.length} estações da Leitura Estendida (faltam ${BLOCOS.length-blocosFeitos()}).`;
+  if(ant==='mapa') return `Destrava quando você encaixar as ${TOTAL_PECAS} peças do Mapa Mental (faltam ${TOTAL_PECAS-pecasFeitas()}).`;
+  if(ant==='vf') return 'Destrava quando você jogar uma rodada completa (12 frases) do Verdadeiro ou Falso.';
+  if(ant==='resumo') return 'Destrava quando você ler o Resumo até o fim e clicar em "✅ Li o resumo até o fim".';
+  return '';
+}
+function ehNova(i){ return i>0 && aberta(i) && !feito(ETAPAS[i].id) && !S.trilha.vistos[ETAPAS[i].id]; }
+
+let abaAtual = 'inicio';
+function renderAbas(){
+  const nav = $('abas'); nav.innerHTML = '';
+  const todas = [{id:'inicio', nome:'Início', ic:'🏠'}].concat(ETAPAS);
+  todas.forEach(a=>{
+    const i = idxEtapa(a.id); const b = document.createElement('button');
+    b.innerHTML = `${a.ic} ${a.nome}`;
+    if(a.id===abaAtual) b.classList.add('ativa');
+    if(i>=0 && !aberta(i)){ b.classList.add('trancada'); b.innerHTML = `🔒 ${a.nome}`; b.title = faltaTexto(i); }
+    else if(i>=0 && feito(a.id)) b.innerHTML += ' <span class="selo">✅</span>';
+    else if(i>=0 && ehNova(i)) b.innerHTML += ' <span class="selo">✨ Novo</span>';
+    b.onclick = ()=>ir(a.id);
+    nav.appendChild(b);
+  });
+}
+function renderTrilha(){
+  const box = $('trilhaCards'); if(!box) return; box.innerHTML = '';
+  if(S.trilha.liberadoPelosPais){ const s=document.createElement('div'); s.className='caixa'; s.innerHTML='🔓 <b>Trilha liberada pelos pais</b> em '+dataBR(S.trilha.liberadoEm); box.appendChild(s); }
+  ETAPAS.forEach((e,i)=>{
+    const b = document.createElement('button'); b.className='etapa';
+    let status;
+    if(!aberta(i)){ b.classList.add('trancada'); status = `<span class="tag lock">🔒 Trancado</span><div class="sub">${faltaTexto(i)}</div>`; }
+    else if(feito(e.id)){ b.classList.add('feita'); status = `<span class="tag ok">✅ Concluído</span><div class="sub">em ${dataBR(S[e.id].concluidoEm)}</div>`; }
+    else if(ehNova(i)){ b.classList.add('nova'); status = `<span class="tag novo">✨ Novo destravado</span>`; }
+    else status = `<span class="sub">${i===0?'Comece por aqui!':'Aberto'}</span>`;
+    b.innerHTML = `<span class="ic">${e.ic}</span><span><b>${i+1}. ${e.nome}</b> ${status}</span>`;
+    b.onclick = ()=>ir(e.id);
+    box.appendChild(b);
+  });
+  renderAbas(); renderProximos();
+}
+function renderProximos(){
+  document.querySelectorAll('[data-proximo]').forEach(bt=>{
+    const i = idxEtapa(bt.dataset.proximo);
+    const ok = aberta(i);
+    bt.disabled = !ok;
+    if(!bt.dataset.rotulo) bt.dataset.rotulo = bt.textContent;
+    bt.textContent = ok ? bt.dataset.rotulo : '🔒 ' + bt.dataset.rotulo.replace(/^\S+\s/,'');
+    bt.title = ok ? '' : faltaTexto(i);
+    bt.onclick = ()=>ir(bt.dataset.proximo);
+  });
+}
+function modalTrancada(i){
+  abrirModal(`<div class="trofeu">🔒</div><h2>Esta etapa ainda está trancada</h2><p>Para abrir <b>${ETAPAS[i].nome}</b>, conclua antes <b>${ETAPAS[i-1].nome}</b>.</p><p>${faltaTexto(i)}</p>`,
+    [{t:'Ir para '+ETAPAS[i-1].nome, cls:'btn', fn:()=>ir(ETAPAS[i-1].id)},{t:'Voltar ao início', cls:'btn claro', fn:()=>ir('inicio')}]);
+}
+function ir(id){
+  const i = idxEtapa(id);
+  if(id!=='inicio' && i<0) id='inicio';
+  if(i>=0 && !aberta(i)){ modalTrancada(i); return; }
+  abaAtual = id;
+  document.querySelectorAll('section.aba').forEach(s=>s.classList.toggle('ativa', s.id==='sec-'+id));
+  if(i>=0 && !S.trilha.vistos[id]){ S.trilha.vistos[id] = new Date().toISOString(); gravar(K.trilha, S.trilha); }
+  renderTrilha();
+  window.scrollTo(0,0);
+  if(id==='resumo') setTimeout(medirRolagem, 300);
+}
+
+// ---------- LEITURA ----------
+const fechados = {};
+function opcoesDe(q, seed){ return embaralhar(q.o.map((o,k)=>Object.assign({k}, o)), seed); }
+function renderLeitura(){
+  const box = $('blocosLeitura'); box.innerHTML = '';
+  let anteriorFeito = true;
+  BLOCOS.forEach((b,j)=>{
+    const liberado = anteriorFeito; const completo = blocoFeito(b);
+    const d = document.createElement('div');
+    d.className = 'card bloco' + (liberado?'':' trancado') + (fechados[b.id]?' fechado':'');
+    d.style.setProperty('--c', b.cor); d.id = 'bloco-'+b.id;
+    let cab = `<div class="cab"><div><h2 style="color:${b.cor}">${b.emoji} ${j+1}. ${b.titulo}</h2><div class="sub">${b.tema} · ${b.pag}</div></div><div>${completo?'<span class="bilhete">🎫 carimbado</span>':(liberado?'':'<span class="tag lock">🔒</span>')}</div></div>`;
+    if(!liberado){ d.innerHTML = cab + `<p class="sub">🔒 Abre quando você responder às 3 perguntas da estação ${j}.</p>`; box.appendChild(d); anteriorFeito=false; return; }
+    let corpo = `<div class="corpo">${b.html}<div class="caixa">🔑 <b>Palavras importantes:</b> ${b.palavras.join(' · ')}</div><h3>🎯 Responda as 3 perguntas</h3>`;
+    b.qs.forEach((q,qi)=>{
+      const qid = b.id+'_'+qi; const r = S.leitura.resp[qid];
+      const ops = opcoesDe(q, hashStr(qid)+SEED_LEIT);
+      corpo += `<div class="pergunta"><b>${qi+1}) ${q.q}</b><div class="opcoes">`;
+      ops.forEach((o,pi)=>{
+        let cls = 'op';
+        if(r){ if(o.ok) cls+=' certa'; else if(o.k===r.esc) cls+=' errada'; else cls+=' cinza'; }
+        corpo += `<button class="${cls}" ${r?'disabled':''} data-q="${qid}" data-k="${o.k}">${LETRAS[pi]}) ${o.t}</button>`;
+      });
+      corpo += `</div>`;
+      if(r){ const esc = q.o[r.esc]; const certa = q.o.find(o=>o.ok);
+        corpo += r.ok ? `<div class="fb ok">🎉 ${esc.w}</div>` : `<div class="fb no">💭 Quase! ${esc.w}<br>✔️ <b>Resposta certa:</b> ${certa.t} — ${certa.w}</div>`; }
+      corpo += `</div>`;
+    });
+    corpo += `</div>`;
+    d.innerHTML = cab + corpo; box.appendChild(d);
+    d.querySelector('.cab').onclick = ()=>{ fechados[b.id] = !fechados[b.id]; d.classList.toggle('fechado'); };
+    anteriorFeito = completo;
+  });
+  box.querySelectorAll('button.op').forEach(bt=>bt.onclick = ()=>responderLeitura(bt.dataset.q, +bt.dataset.k));
+  const resp = Object.keys(S.leitura.resp).length; const acertos = Object.values(S.leitura.resp).filter(r=>r.ok).length;
+  $('barraLeitura').style.width = (resp/TOTAL_PERG*100)+'%';
+  $('txtLeitura').innerHTML = `${resp} de ${TOTAL_PERG} perguntas respondidas · ⭐ ${acertos} acertos · ${blocosFeitos()} de ${BLOCOS.length} estações`;
+  $('fimLeitura').style.display = S.leitura.concluido ? 'block' : 'none';
+}
+function responderLeitura(qid, k){
+  if(S.leitura.resp[qid]) return;
+  const [bid, qi] = qid.split('_'); const b = BLOCOS.find(x=>x.id===bid); const q = b.qs[+qi];
+  S.leitura.resp[qid] = {esc:k, ok:!!q.o[k].ok, em:new Date().toISOString()};
+  const fimAgora = !S.leitura.concluido && Object.keys(S.leitura.resp).length===TOTAL_PERG;
+  if(fimAgora) concluir('leitura');
+  salvar('leitura'); renderLeitura();
+  if(fimAgora) abrirModal('<div class="trofeu">🏆</div><h2>Leitura concluída!</h2><p>Você passou por todas as estações. O <b>Mapa Mental</b> foi destravado! ✨</p>', [{t:'🧠 Ir para o Mapa Mental', cls:'btn', fn:()=>ir('mapa')},{t:'Ficar aqui', cls:'btn claro'}]);
+}
+
+// ---------- MAPA MENTAL ----------
+function renderMapa(){
+  const box = $('ramosMapa'); box.innerHTML = '';
+  RAMOS.forEach(r=>{
+    const d = document.createElement('div'); d.className='ramo'; d.style.setProperty('--c', r.cor);
+    let h = `<h4>${r.nome}</h4>`;
+    r.nos.forEach(n=>{
+      if(typeof n==='string'){ h += `<div class="no">• ${n}</div>`; return; }
+      h += '<div class="no">• ' + n.map(p=>{
+        if(typeof p==='string') return p;
+        const st = S.mapa.pecas[p.id];
+        if(st && st.feita) return `<span class="lacuna feita"><span>${p.certa}</span></span>`;
+        const ops = embaralhar([p.certa, p.errada], hashStr(p.id)+SEED_MAPA);
+        return `<span class="lacuna">` + ops.map(o=>`<button data-p="${p.id}" data-v="${o}">${o}</button>`).join('<span style="align-self:center">ou</span>') + `</span>`;
+      }).join('') + '</div>';
+    });
+    d.innerHTML = h; box.appendChild(d);
+  });
+  box.querySelectorAll('.lacuna button').forEach(bt=>bt.onclick = ()=>encaixar(bt));
+  const f = pecasFeitas();
+  $('contadorMapa').textContent = f===TOTAL_PECAS ? '🧠 Mapa completo!' : `🧩 Mapa: ${f} de ${TOTAL_PECAS} peças encaixadas`;
+  $('mapa').classList.toggle('incompleto', f<TOTAL_PECAS);
+  $('mapa').classList.toggle('completo', f===TOTAL_PECAS);
+  $('mapaFim').style.display = f===TOTAL_PECAS ? 'block' : 'none';
+}
+function encaixar(bt){
+  const p = PECAS.find(x=>x.id===bt.dataset.p); const st = S.mapa.pecas[p.id] || {feita:false, tentou:false};
+  if(bt.dataset.v===p.certa){
+    st.feita = true; st.deprimeira = !st.tentou; st.em = new Date().toISOString(); S.mapa.pecas[p.id] = st;
+    const fimAgora = !S.mapa.concluido && pecasFeitas()===TOTAL_PECAS;
+    if(fimAgora) concluir('mapa');
+    salvar('mapa'); renderMapa();
+    if(fimAgora) abrirModal('<div class="trofeu">🧠</div><h2>Mapa completo!</h2><p>Você montou o mapa inteiro. O <b>Verdadeiro ou Falso</b> foi destravado! ✨</p>', [{t:'✅ Jogar Verdadeiro ou Falso', cls:'btn', fn:()=>ir('vf')},{t:'Ver o mapa', cls:'btn claro'}]);
+  } else {
+    st.tentou = true; S.mapa.pecas[p.id] = st; salvar('mapa');
+    bt.classList.remove('erro'); void bt.offsetWidth; bt.classList.add('erro');
+  }
+}
+
+// ---------- VERDADEIRO OU FALSO ----------
+let rodada = null;
+function novaRodada(){ const idx = embaralhar(VF.map((_,i)=>i), (Math.random()*1e9)>>>0).slice(0,12); rodada = {itens:idx, i:0, acertos:0, respondida:null}; renderVF(); }
+function estrelas(pct){ const n = Math.round(pct/20); return '⭐'.repeat(n) + '☆'.repeat(5-n); }
+function renderVF(){
+  const box = $('vfJogo');
+  if(!rodada){
+    box.innerHTML = `<h2>✅ Verdadeiro ou Falso</h2><p>Vou mostrar <b>12 frases</b> sobre a viagem. Para cada uma, diga se é <b>Verdadeira</b> ou <b>Falsa</b>. Depois de cada resposta aparece a explicação.</p>
+      ${S.vf.melhor!==null?`<p>🏅 Seu melhor placar: <b>${S.vf.melhor}%</b> ${estrelas(S.vf.melhor)} · rodadas jogadas: ${S.vf.rodadas}</p>`:''}
+      <div style="text-align:center"><button class="btn loco" id="btVfComecar">▶️ Começar rodada</button></div>`;
+    $('btVfComecar').onclick = novaRodada; return;
+  }
+  if(rodada.i >= rodada.itens.length){
+    const pct = Math.round(rodada.acertos/rodada.itens.length*100);
+    box.innerHTML = `<div class="placar-final"><div class="trofeu">🏆</div><h2>Rodada completa!</h2><p>Você acertou <b>${rodada.acertos} de ${rodada.itens.length}</b> — <b>${pct}%</b></p><p class="estrelas">${estrelas(pct)}</p><p>🏅 Melhor placar: ${S.vf.melhor}%</p>
+      <button class="btn azul" id="btVfDeNovo">🔁 Jogar de novo</button> <button class="btn loco" id="btVfResumo">🗺️ Agora revise no Resumo!</button></div>`;
+    $('btVfDeNovo').onclick = novaRodada; $('btVfResumo').onclick = ()=>ir('resumo'); return;
+  }
+  const it = VF[rodada.itens[rodada.i]];
+  let h = `<div class="sub">Frase ${rodada.i+1} de ${rodada.itens.length} · ✔️ ${rodada.acertos} acertos</div><div class="barra"><div style="width:${rodada.i/rodada.itens.length*100}%"></div></div>
+    <div class="vf-frase">"${it.f}"</div>`;
+  if(rodada.respondida===null){
+    h += `<div class="vf-bts"><button class="btn" id="btV">👍 Verdadeiro</button><button class="btn loco" id="btF">👎 Falso</button></div>`;
+    box.innerHTML = h; $('btV').onclick = ()=>responderVF(1); $('btF').onclick = ()=>responderVF(0);
+  } else {
+    const acertou = rodada.respondida===it.v;
+    h += `<div class="fb ${acertou?'ok':'no'}">${acertou?'🎉 Acertou!':'💭 Não foi dessa vez.'} ${it.e}</div><div style="text-align:center;margin-top:10px"><button class="btn azul" id="btVfProx">${rodada.i+1<rodada.itens.length?'➡️ Próxima frase':'🏁 Ver resultado'}</button></div>`;
+    box.innerHTML = h; $('btVfProx').onclick = ()=>{ rodada.i++; rodada.respondida=null; if(rodada.i>=rodada.itens.length) fimRodada(); renderVF(); };
+  }
+}
+function responderVF(v){ const it = VF[rodada.itens[rodada.i]]; rodada.respondida = v; if(v===it.v) rodada.acertos++; renderVF(); }
+function fimRodada(){
+  const pct = Math.round(rodada.acertos/rodada.itens.length*100);
+  S.vf.rodadas = (S.vf.rodadas||0)+1; S.vf.melhor = Math.max(S.vf.melhor||0, pct);
+  S.vf.historico = (S.vf.historico||[]).concat([{pct, em:new Date().toISOString()}]).slice(-20);
+  const primeira = !S.vf.concluido; concluir('vf'); salvar('vf');
+  if(primeira) setTimeout(()=>abrirModal('<div class="trofeu">🗺️</div><h2>Resumo destravado!</h2><p>Agora revise tudo no <b>Resumo</b> antes do Simulado.</p>', [{t:'🗺️ Ir para o Resumo', cls:'btn', fn:()=>ir('resumo')},{t:'Ficar aqui', cls:'btn claro'}]), 200);
+}
+
+// ---------- RESUMO ----------
+function renderResumo(){
+  $('linhaTempo').innerHTML = LINHA.map(x=>`<div class="parada">${relogio(x[0],0,{t:70})}<div><b>${x[1]}</b><br>${x[2]}</div></div>`).join('');
+  let tm = '<table class="mini"><tr><th>×</th>' + [1,2,3,4,5,6,7,8,9,10].map(c=>`<th>${c}</th>`).join('') + '</tr>';
+  [1,2,3,4,5,10].forEach(l=>{ tm += `<tr><th>${l}</th>` + [1,2,3,4,5,6,7,8,9,10].map(c=>`<td>${l*c}</td>`).join('') + '</tr>'; });
+  $('tabelaMult').innerHTML = tm + '</table>';
+  $('tabelaMin').innerHTML = '<tr><th>Ponteiro maior no</th>' + [1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<td>${n}</td>`).join('') + '</tr><tr><th>Minutos</th>' + [1,2,3,4,5,6,7,8,9,10,11,12].map(n=>`<td>${n*5}</td>`).join('') + '</tr>';
+  $('relampago').innerHTML = RELAMPAGO.map((r,i)=>`<button class="op" data-r="${i}">⚡ ${r[0]}</button><div class="resp-oculta" id="rel${i}">👉 ${r[1]}</div>`).join('');
+  document.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>{ const el=$('rel'+b.dataset.r); el.style.display = el.style.display==='block'?'none':'block'; });
+  atualizarBotaoResumo();
+}
+function medirRolagem(){
+  if(abaAtual!=='resumo') return;
+  const h = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = h<=0 ? 100 : Math.min(100, Math.round(window.scrollY/h*100));
+  if(pct > (S.resumo.maxRolagem||0)){ S.resumo.maxRolagem = pct; salvar('resumo'); }
+  atualizarBotaoResumo();
+}
+function atualizarBotaoResumo(){
+  const bt = $('btLiResumo'); const pode = S.resumo.concluido || (S.resumo.maxRolagem||0) >= 90;
+  bt.disabled = !pode || S.resumo.concluido;
+  bt.textContent = S.resumo.concluido ? '✅ Resumo lido!' : '✅ Li o resumo até o fim';
+  $('txtLiResumo').textContent = S.resumo.concluido ? 'Concluído em '+dataBR(S.resumo.concluidoEm)+'. O Simulado está aberto!' : (pode ? 'Pode clicar!' : 'O botão acende quando você chegar ao fim da página.');
+}
+function liResumo(){
+  if(S.resumo.concluido) return;
+  concluir('resumo'); salvar('resumo'); atualizarBotaoResumo();
+  abrirModal('<div class="trofeu">📝</div><h2>Simulado destravado!</h2><p>Agora é hora de mostrar o que aprendeu. Boa sorte, jovem aprendiz!</p>', [{t:'📝 Ir para o Simulado', cls:'btn', fn:()=>ir('simulado')},{t:'Revisar mais um pouco', cls:'btn claro'}]);
+}
+
+// ---------- SIMULADO ----------
+function opsSim(qi){ const q = SIM[qi]; const base = q.o.map((o,k)=>({k, t:o[0], ok:o.length===3, w:o.length===3?o[2]:o[1]})); return embaralhar(base, hashStr('sim'+qi)+SEED_SIM); }
+function renderSimulado(){
+  const box = $('questoesSim'); box.innerHTML = '';
+  SIM.forEach((q,qi)=>{
+    const d = document.createElement('div'); d.className = 'card';
+    const r = S.simulado.resp[qi];
+    let h = `<b>Questão ${qi+1}.</b> ${q.q}<div class="opcoes" style="margin-top:8px">`;
+    opsSim(qi).forEach((o,pi)=>{
+      let cls='op'; if(r===o.k) cls+=' sel';
+      if(S.simulado.enviado){ cls='op'+(o.ok?' certa':(r===o.k?' errada':' cinza')); }
+      h += `<button class="${cls}" ${S.simulado.enviado?'disabled':''} data-sq="${qi}" data-k="${o.k}">${LETRAS[pi]}) ${o.t}</button>`;
+    });
+    d.innerHTML = h + '</div>'; box.appendChild(d);
+  });
+  if(!S.simulado.enviado) box.querySelectorAll('[data-sq]').forEach(b=>b.onclick=()=>{ S.simulado.resp[b.dataset.sq] = +b.dataset.k; salvar('simulado'); renderSimulado(); });
+  const n = Object.keys(S.simulado.resp).length;
+  $('barraSim').style.width = (n/SIM.length*100)+'%';
+  $('txtSim').textContent = S.simulado.enviado ? `Enviado em ${dataBR(S.simulado.enviadoEm)}` : `${n} de ${SIM.length} respondidas`;
+  $('envioSim').style.display = S.simulado.enviado ? 'none' : 'block';
+  renderResultado();
+}
+function gerarCodigo(ac){ const L='ABCDEFGHJKLMNPQRSTUVWXYZ'; const r=()=>L[Math.floor(Math.random()*L.length)]; return `SIM-${String(ac).padStart(2,'0')}-${r()}${r()}`; }
+function enviarSim(){
+  const falta = SIM.map((_,i)=>i).filter(i=>S.simulado.resp[i]===undefined);
+  if(falta.length){ abrirModal(`<div class="trofeu">✏️</div><h2>Ainda faltam ${falta.length} questões</h2><p>Responda as questões: <b>${falta.map(i=>i+1).join(', ')}</b>.</p>`); return; }
+  abrirModal('<h2>Enviar o Simulado?</h2><p>Depois de enviar, não dá para mudar as respostas.</p>', [{t:'📨 Enviar', cls:'btn loco', fn:confirmarEnvio},{t:'Revisar antes', cls:'btn claro'}]);
+}
+function confirmarEnvio(){
+  let ac = 0; SIM.forEach((q,qi)=>{ if(q.o[S.simulado.resp[qi]].length===3) ac++; });
+  S.simulado.acertos = ac; S.simulado.enviado = true; S.simulado.enviadoEm = new Date().toISOString();
+  if(!S.simulado.codigo) S.simulado.codigo = gerarCodigo(ac);
+  concluir('simulado'); salvar('simulado'); renderSimulado();
+  setTimeout(()=>{ const el=$('resultadoSim'); if(el) el.scrollIntoView({behavior:'smooth'}); }, 100);
+}
+function renderResultado(){
+  const box = $('resultadoSim');
+  if(!S.simulado.enviado){ box.innerHTML=''; return; }
+  const ac = S.simulado.acertos; const pct = Math.round(ac/SIM.length*100);
+  let h = `<div class="card placar-final"><div class="trofeu">${pct>=70?'🏆':'💪'}</div><h2>Você acertou ${ac} de ${SIM.length} (${pct}%)</h2><p class="estrelas">${estrelas(pct)}</p>
+    <p>${pct>=70?'Mandou muito bem!':'Continue treinando: releia o Resumo e confira o gabarito abaixo.'}</p>
+    <p>Seu código para os pais: <b style="font-size:1.3em;color:var(--trilho2)">${S.simulado.codigo}</b></p></div>
+    <div class="card"><h2>📗 Gabarito comentado</h2><p class="sub">A certa aparece em verde. As outras aparecem em cinza, com a explicação do erro. A sua resposta tem contorno roxo.</p>`;
+  SIM.forEach((q,qi)=>{
+    const r = S.simulado.resp[qi]; const ops = opsSim(qi); const acertou = q.o[r].length===3;
+    h += `<div class="gab-q"><b>${acertou?'✅':'❌'} Questão ${qi+1}.</b> ${q.q}`;
+    ops.forEach((o,pi)=>{ h += `<div class="gab-op ${o.ok?'certa':'cinza'} ${r===o.k?'marcada':''}">${o.ok?'✔️':'✖️'} <b>${LETRAS[pi]}) ${o.t}</b>${r===o.k?' <i>(sua resposta)</i>':''}<br><span>${o.w}</span></div>`; });
+    if(q.d) h += `<div class="sub">💡 <b>Dica:</b> ${q.d}</div>`;
+    h += `</div>`;
+  });
+  h += `<p style="text-align:center"><a class="btn azul" href="gabarito.html" target="_blank" style="text-decoration:none;display:inline-block">📄 Abrir o gabarito para imprimir</a></p>`;
+  box.innerHTML = h + '</div>';
+}
+
+// ---------- PAINEL / RELATÓRIO / EXPORTAR ----------
+function atualizarPainel(){
+  const datas = ['leitura','mapa','vf','resumo','simulado'].map(n=>S[n]&&S[n].salvoEm).filter(Boolean).sort();
+  const el = $('painelSalvar'); if(el) el.textContent = datas.length ? `Progresso salvo neste aparelho. Último salvamento: ${dataBR(datas[datas.length-1])}` : 'Seu progresso é salvo sozinho neste aparelho.';
+}
+function abrirRelatorio(){
+  const cod = $('codPais').value.trim().toUpperCase(); const area = $('areaPais');
+  const ehPais = cod===CODIGO_PAIS; const ehSim = S.simulado.codigo && cod===S.simulado.codigo;
+  if(!ehPais && !ehSim){ area.innerHTML = '<p class="fb no">Código não reconhecido. Use o código do Simulado (SIM-…) ou o código da família.</p>'; return; }
+  const resp = Object.values(S.leitura.resp); const lAc = resp.filter(r=>r.ok).length;
+  const errLeit = []; BLOCOS.forEach(b=>b.qs.forEach((q,qi)=>{ const r=S.leitura.resp[b.id+'_'+qi]; if(r && !r.ok) errLeit.push(b.titulo+' – '+q.q.replace(/<svg[\s\S]*?<\/svg>/g,'')); }));
+  const pecasPrim = PECAS.filter(p=>S.mapa.pecas[p.id] && S.mapa.pecas[p.id].feita && S.mapa.pecas[p.id].deprimeira).length;
+  const errSim = S.simulado.enviado ? SIM.map((q,qi)=>q.o[S.simulado.resp[qi]].length===3?null:qi+1).filter(Boolean) : [];
+  let h = `<table class="rel"><tr><th>Material</th><th>Resultado</th></tr>
+   <tr><td>📖 Leitura Estendida</td><td>${resp.length} de ${TOTAL_PERG} respondidas · ${lAc} acertos de primeira${errLeit.length?'<br><span class="sub">Errou: '+errLeit.join('; ')+'</span>':''}</td></tr>
+   <tr><td>🧠 Mapa Mental</td><td>${pecasFeitas()} de ${TOTAL_PECAS} peças encaixadas · <b>Mapa Mental: ${pecasPrim} de ${TOTAL_PECAS} peças encaixadas de primeira</b></td></tr>
+   <tr><td>✅ Verdadeiro ou Falso</td><td>${S.vf.melhor!==null?'Melhor placar: '+S.vf.melhor+'% · rodadas: '+S.vf.rodadas:'Ainda não jogou'}</td></tr>
+   <tr><td>🗺️ Resumo</td><td>Rolagem máxima: ${S.resumo.maxRolagem||0}% · ${S.resumo.concluido?'marcou "li até o fim"':'não marcou "li até o fim"'}</td></tr>
+   <tr><td>📝 Simulado</td><td>${S.simulado.enviado?`${S.simulado.acertos} de ${SIM.length} (${Math.round(S.simulado.acertos/SIM.length*100)}%) · código ${S.simulado.codigo}${errSim.length?'<br><span class="sub">Errou as questões: '+errSim.join(', ')+'</span>':''}`:'Ainda não enviado'}</td></tr>
+   <tr><td>🛤️ Trilha</td><td>${ETAPAS.map(e=>`${e.ic} ${e.nome}: ${feito(e.id)?'✅ concluída em '+dataBR(S[e.id].concluidoEm):'⏳ não concluída'}`).join('<br>')}
+     <br>${S.trilha.liberadoPelosPais?'🔓 Trilha liberada pelos pais em '+dataBR(S.trilha.liberadoEm):'🔒 Trilha não liberada pelos pais'}
+     ${S.trilha.historico.length?'<br><span class="sub">Histórico: '+S.trilha.historico.map(x=>x.acao+' em '+dataBR(x.em)).join('; ')+'</span>':''}</td></tr></table>`;
+  if(ehPais){
+    h += S.trilha.liberadoPelosPais
+      ? `<p class="caixa">🔓 <b>Trilha liberada pelos pais</b></p><button class="btn claro" id="btTrancar">🔒 Trancar de novo</button>`
+      : `<button class="btn azul" id="btLiberar">🔓 Liberar todos os materiais</button>`;
+  }
+  h += `<p><a href="gabarito.html" target="_blank">📄 Gabarito comentado do Simulado (arquivo separado)</a></p>`;
+  area.innerHTML = h;
+  if($('btLiberar')) $('btLiberar').onclick = ()=>{ S.trilha.liberadoPelosPais=true; S.trilha.liberadoEm=new Date().toISOString(); S.trilha.historico.push({acao:'liberou', em:S.trilha.liberadoEm}); gravar(K.trilha,S.trilha); renderTrilha(); abrirRelatorio(); };
+  if($('btTrancar')) $('btTrancar').onclick = ()=>{ S.trilha.liberadoPelosPais=false; S.trilha.historico.push({acao:'trancou de novo', em:new Date().toISOString()}); gravar(K.trilha,S.trilha); renderTrilha(); abrirRelatorio(); };
+}
+function exportar(){
+  const dados = {kit:SLUG, titulo:'Expresso das Contas — Matemática 3º ano', exportadoEm:new Date().toISOString(), leitura:S.leitura, mapa:S.mapa, vf:S.vf, resumo:S.resumo, simulado:S.simulado, trilha:S.trilha};
+  const blob = new Blob([JSON.stringify(dados,null,2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'progresso_expresso_das_contas.json'; document.body.appendChild(a); a.click(); a.remove();
+}
+function importar(arq){
+  const fr = new FileReader();
+  fr.onload = ()=>{ try{ const d = JSON.parse(fr.result); if(d.kit!==SLUG) throw 0;
+      ['leitura','mapa','vf','resumo','simulado','trilha'].forEach(n=>{ if(d[n]) gravar(K[n], d[n]); });
+      carregar(); renderTudo(); abrirModal('<h2>📤 Progresso importado!</h2>');
+    }catch(e){ abrirModal('<h2>Arquivo não reconhecido</h2><p>Escolha o arquivo exportado deste kit.</p>'); } };
+  fr.readAsText(arq);
+}
+function zerarTudo(){
+  abrirModal('<h2>🗑️ Zerar tudo?</h2><p>Todo o progresso deste kit será apagado neste aparelho.</p>', [{t:'Sim, zerar', cls:'btn loco', fn:()=>{ Object.values(K).forEach(apagar); carregar(); rodada=null; renderTudo(); ir('inicio'); }},{t:'Cancelar', cls:'btn claro'}]);
+}
+
+function renderTudo(){ renderLeitura(); renderMapa(); renderVF(); renderResumo(); renderSimulado(); atualizarPainel(); renderTrilha(); }
+function iniciar(){
+  carregar(); renderTudo();
+  $('btExportar').onclick = exportar; $('btImportar').onclick = ()=>$('arqImportar').click();
+  $('arqImportar').onchange = e=>{ if(e.target.files[0]) importar(e.target.files[0]); e.target.value=''; };
+  $('btZerar').onclick = zerarTudo; $('btRelatorio').onclick = abrirRelatorio;
+  $('codPais').addEventListener('keydown', e=>{ if(e.key==='Enter') abrirRelatorio(); });
+  $('btLiResumo').onclick = liResumo; $('btEnviarSim').onclick = enviarSim;
+  window.addEventListener('scroll', ()=>{ if(abaAtual==='resumo') medirRolagem(); }, {passive:true});
+  window.addEventListener('hashchange', ()=>{ const h = location.hash.replace('#',''); if(h) ir(h); });
+  const h0 = location.hash.replace('#',''); ir(h0 || 'inicio');
+}
+iniciar();
+</script>
+</body>
+</html>
